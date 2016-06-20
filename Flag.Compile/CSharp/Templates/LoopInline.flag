@@ -1,0 +1,3 @@
+﻿foreach ( var ~ChildVariable|~||~|~ in ~ContextVariable|~||~|~ ) {
+~Instructions||Instruction~
+}

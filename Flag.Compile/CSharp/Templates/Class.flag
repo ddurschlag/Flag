@@ -1,0 +1,16 @@
+﻿using System;
+using System.IO;
+public class ~Name|~||~|~ {
+    private TextWriter Writer;
+    private void Write(string s){Writer.Write(s);}
+
+    public ~Name|~||~|~(TextWriter writer){{Writer=writer;}}
+
+    ~Templates|~|
+
+    public void ~Item1|~||~|~(dynamic tArg) {
+        ~Item2||Template~
+    }   
+
+    |~|~
+}
