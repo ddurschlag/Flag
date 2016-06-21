@@ -10,11 +10,6 @@ namespace Flag.Compile.CSharp
     using Parse.Structures;
     public class TemplateCompiler
     {
-        public TemplateCompiler(string path, string @namespace)
-        : this(File.ReadAllText(path), @namespace, new DirectoryInfo(path).Name)
-        {
-        }
-
         public TemplateCompiler(string text, string @namespace, string name)
         {
             Text = text;
