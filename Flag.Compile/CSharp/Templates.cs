@@ -7,184 +7,170 @@ using System.Threading.Tasks;
 
 namespace Flag.Compile.CSharp
 {
-    class Templates
+    public partial class Templates
     {
-        private TextWriter Writer;
-        private void Write(string s) { Writer.Write(s); }
-
-        public Templates(TextWriter writer) { { Writer = writer; } }
 
 
-
-        public void Call(dynamic tArg)
+        public static void Call(dynamic tArg, TextWriter writer)
         {
-            Write(@"if ( "); if (tArg.ChildVariable != null)
+            writer.Write(@"if ( "); if (tArg.ChildVariable != null)
             {
-                Write(tArg.ChildVariable);
+                writer.Write(tArg.ChildVariable);
             }
-            Write(@" != null ) { "); if (tArg.Name != null)
+            writer.Write(@" != null ) { "); if (tArg.Name != null)
             {
-                Write(tArg.Name);
+                writer.Write(tArg.Name);
             }
-            Write(@"("); if (tArg.ChildVariable != null)
+            writer.Write(@"("); if (tArg.ChildVariable != null)
             {
-                Write(tArg.ChildVariable);
+                writer.Write(tArg.ChildVariable);
             }
-            Write(@"); }
+            writer.Write(@", writer); }
 ");
         }
 
 
 
-        public void CallInline(dynamic tArg)
+        public static void CallInline(dynamic tArg, TextWriter writer)
         {
-            Write(@"if ( "); if (tArg.ChildVariable != null)
+            writer.Write(@"if ( "); if (tArg.ChildVariable != null)
             {
-                Write(tArg.ChildVariable);
+                writer.Write(tArg.ChildVariable);
             }
-            Write(@" != null ) {
-"); if (tArg.Template != null) { Template(tArg.Template); }
-            Write(@"
+            writer.Write(@" != null ) {
+"); if (tArg.Template != null) { Template(tArg.Template, writer); }
+            writer.Write(@"
 }
 ");
         }
 
 
 
-        public void Class(dynamic tArg)
+        public static void Class(dynamic tArg, TextWriter writer)
         {
-            Write(@"using System;
+            writer.Write(@"using System;
 using System.IO;
 namespace "); if (tArg.Namespace != null)
             {
-                Write(tArg.Namespace);
+                writer.Write(tArg.Namespace);
             }
-            Write(@" {
-    public class "); if (tArg.Name != null)
+            writer.Write(@" {
+    public partial class "); if (tArg.Name != null)
             {
-                Write(tArg.Name);
+                writer.Write(tArg.Name);
             }
-            Write(@" {
-        private TextWriter Writer;
-        private void Write(string s){Writer.Write(s);}
-
-        public "); if (tArg.Name != null)
-            {
-                Write(tArg.Name);
-            }
-            Write(@"(TextWriter writer){{Writer=writer;}}
-
+            writer.Write(@" {
         "); if (tArg.Templates != null)
             {
                 if (tArg.Templates != null)
                     foreach (var anon_0 in tArg.Templates)
                     {
-                        Write(@"
+                        writer.Write(@"
 
-        public void "); if (anon_0.Item1 != null)
+        public static void "); if (anon_0.Item1 != null)
                         {
-                            Write(anon_0.Item1);
+                            writer.Write(anon_0.Item1);
                         }
-                        Write(@"(dynamic tArg) {
-            "); if (anon_0.Item2 != null) { Template(anon_0.Item2); }
-                        Write(@"
+                        writer.Write(@"(dynamic tArg, TextWriter writer) {
+            "); if (anon_0.Item2 != null) { Template(anon_0.Item2, writer); }
+                        writer.Write(@"
         }   
 
         ");
                     }
             }
-            Write(@"
+            writer.Write(@"
     }
 }");
         }
 
 
 
-        public void Instructions(dynamic tArg)
+        public static void Instructions(dynamic tArg, TextWriter writer)
         {
             if (tArg != null)
                 foreach (var anon_1 in tArg)
                 {
-                    if (anon_1.Loop != null) { Loop(anon_1.Loop); }
-                    if (anon_1.LoopInline != null) { LoopInline(anon_1.LoopInline); }
-                    if (anon_1.Call != null) { Call(anon_1.Call); }
-                    if (anon_1.CallInline != null) { CallInline(anon_1.CallInline); }
-                    if (anon_1.Output != null) { Output(anon_1.Output); }
-                    if (anon_1.Render != null) { Render(anon_1.Render); }
+                    if (anon_1.Loop != null) { Loop(anon_1.Loop, writer); }
+                    if (anon_1.LoopInline != null) { LoopInline(anon_1.LoopInline, writer); }
+                    if (anon_1.Call != null) { Call(anon_1.Call, writer); }
+                    if (anon_1.CallInline != null) { CallInline(anon_1.CallInline, writer); }
+                    if (anon_1.Output != null) { Output(anon_1.Output, writer); }
+                    if (anon_1.Render != null) { Render(anon_1.Render, writer); }
 
                 }
         }
 
 
 
-        public void Loop(dynamic tArg)
+        public static void Loop(dynamic tArg, TextWriter writer)
         {
-            Write(@"if ( "); if (tArg.ContextVariable != null)
+            writer.Write(@"if ( "); if (tArg.ContextVariable != null)
             {
-                Write(tArg.ContextVariable);
+                writer.Write(tArg.ContextVariable);
             }
-            Write(@" != null ) foreach ( var childElement in "); if (tArg.ContextVariable != null)
+            writer.Write(@" != null ) foreach ( var childElement in "); if (tArg.ContextVariable != null)
             {
-                Write(tArg.ContextVariable);
+                writer.Write(tArg.ContextVariable);
             }
-            Write(@" ) { "); if (tArg.Name != null)
+            writer.Write(@" ) { "); if (tArg.Name != null)
             {
-                Write(tArg.Name);
+                writer.Write(tArg.Name);
             }
-            Write(@"(childElement); }
+            writer.Write(@"(childElement); }
 ");
         }
 
 
 
-        public void LoopInline(dynamic tArg)
+        public static void LoopInline(dynamic tArg, TextWriter writer)
         {
-            Write(@"if ( "); if (tArg.ContextVariable != null)
+            writer.Write(@"if ( "); if (tArg.ContextVariable != null)
             {
-                Write(tArg.ContextVariable);
+                writer.Write(tArg.ContextVariable);
             }
-            Write(@" != null )
+            writer.Write(@" != null )
 foreach ( var "); if (tArg.ChildVariable != null)
             {
-                Write(tArg.ChildVariable);
+                writer.Write(tArg.ChildVariable);
             }
-            Write(@" in "); if (tArg.ContextVariable != null)
+            writer.Write(@" in "); if (tArg.ContextVariable != null)
             {
-                Write(tArg.ContextVariable);
+                writer.Write(tArg.ContextVariable);
             }
-            Write(@" ) {
-"); if (tArg.Template != null) { Template(tArg.Template); }
-            Write(@"
+            writer.Write(@" ) {
+"); if (tArg.Template != null) { Template(tArg.Template, writer); }
+            writer.Write(@"
 }");
         }
 
 
 
-        public void Output(dynamic tArg)
+        public static void Output(dynamic tArg, TextWriter writer)
         {
-            Write(@"Write(@"""); if (tArg.Text != null)
+            writer.Write(@"writer.Write(@"""); if (tArg.Text != null)
             {
-                Write(tArg.Text);
+                writer.Write(tArg.Text);
             }
-            Write(@""");");
+            writer.Write(@""");");
         }
 
 
 
-        public void Render(dynamic tArg)
+        public static void Render(dynamic tArg, TextWriter writer)
         {
-            Write(@"Write("); if (tArg.ContextVariable != null)
+            writer.Write(@"writer.Write("); if (tArg.ContextVariable != null)
             {
-                Write(tArg.ContextVariable);
+                writer.Write(tArg.ContextVariable);
             }
-            Write(@");");
+            writer.Write(@");");
         }
 
 
 
-        public void Template(dynamic tArg)
+        public static void Template(dynamic tArg, TextWriter writer)
         {
-            if (tArg.Instructions != null) { Instructions(tArg.Instructions); }
+            if (tArg.Instructions != null) { Instructions(tArg.Instructions, writer); }
 
         }
 

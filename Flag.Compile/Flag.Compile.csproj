@@ -43,7 +43,51 @@
     <Compile Include="CSharp\BlockContents.cs" />
     <Compile Include="CSharp\ClassContents.cs" />
     <Compile Include="CSharp\TemplateCompiler.cs" />
-    <Compile Include="CSharp\Templates.cs" />
+    <Compile Include="CSharp\Templates\Call.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Call.flag</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\Templates\CallInline.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CallInline.flag</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\Templates\Class.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Class.flag</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\Templates\Instructions.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Instructions.flag</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\Templates\Loop.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Loop.flag</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\Templates\LoopInline.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LoopInline.flag</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\Templates\Output.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Output.flag</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\Templates\Render.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Render.flag</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\Templates\Template.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Template.flag</DependentUpon>
+    </Compile>
     <Compile Include="CSharp\TypeViewModel.cs" />
     <Compile Include="InstructionViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -58,31 +102,40 @@
   <ItemGroup />
   <ItemGroup>
     <None Include="CSharp\Templates\Call.flag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>Call.gen.cs</LastGenOutput>
     </None>
     <None Include="CSharp\Templates\CallInline.flag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>CallInline.gen.cs</LastGenOutput>
     </None>
     <None Include="CSharp\Templates\Class.flag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>Class.gen.cs</LastGenOutput>
     </None>
     <None Include="CSharp\Templates\Instructions.flag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>Instructions.gen.cs</LastGenOutput>
     </None>
     <None Include="CSharp\Templates\Loop.flag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>Loop.gen.cs</LastGenOutput>
     </None>
     <None Include="CSharp\Templates\LoopInline.flag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>LoopInline.gen.cs</LastGenOutput>
     </None>
     <None Include="CSharp\Templates\Output.flag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>Output.gen.cs</LastGenOutput>
     </None>
     <None Include="CSharp\Templates\Render.flag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>Render.gen.cs</LastGenOutput>
     </None>
     <None Include="CSharp\Templates\Template.flag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>Template.gen.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

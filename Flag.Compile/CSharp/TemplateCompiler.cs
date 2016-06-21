@@ -19,10 +19,12 @@ namespace Flag.Compile.CSharp
 
         public void Compile(TextWriter writer)
         {
-            new Templates(writer).Class(new TypeViewModel(
-                "Templates",
-                Namespace,
-                new[] { Tuple.Create(Name, Load(Text)) })
+            Templates.Templates.Class(
+                new TypeViewModel(
+                    "Templates",
+                    Namespace,
+                    new[] { Tuple.Create(Name, Load(Text)) }),
+                writer
             );
         }
 

@@ -15,7 +15,7 @@ namespace Flag.VisualStudio
     {
         public int DefaultExtension(out string pbstrDefaultExtension)
         {
-            pbstrDefaultExtension = ".cs";  // the extension must include the leading period
+            pbstrDefaultExtension = ".gen.cs";  // the extension must include the leading period
             return VSConstants.S_OK; // signal successful completion
         }
 

@@ -1,1 +1,1 @@
-﻿Write(@"~Text|~||~|~");
+﻿writer.Write(@"~Text|~||~|~");

@@ -1,15 +1,10 @@
 ﻿using System;
 using System.IO;
 namespace ~Namespace|~||~|~ {
-    public class ~Name|~||~|~ {
-        private TextWriter Writer;
-        private void Write(string s){Writer.Write(s);}
-
-        public ~Name|~||~|~(TextWriter writer){{Writer=writer;}}
-
+    public partial class ~Name|~||~|~ {
         ~Templates|~|
 
-        public void ~Item1|~||~|~(dynamic tArg) {
+        public static void ~Item1|~||~|~(dynamic tArg, TextWriter writer) {
             ~Item2||Template~
         }   
 

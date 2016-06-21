@@ -43,6 +43,12 @@ namespace SimpleParse
 
             File.WriteAllText("CompiledTemplate.cs", sb.ToString());
 
+            sb = new StringBuilder();
+            using (var tw = new StringWriter(sb))
+                new Flag.Compile.CSharp.TemplateCompiler(File.ReadAllText(@"CSharp\Templates\Call.flag"), "Flag.Compile.CSharp.Templates", "Call").Compile(tw);
+
+            File.WriteAllText("Call.cs", sb.ToString());
+
             Console.ReadLine();
         }
 
@@ -57,18 +63,11 @@ namespace SimpleParse
 
             public void Compile(TextWriter writer)
             {
-                new Flag.Compile.CSharp.Templates.Templates(writer).Class(new Flag.Compile.CSharp.TypeViewModel(Name, Namespace,
+                Flag.Compile.CSharp.Templates.Templates.Class(new Flag.Compile.CSharp.TypeViewModel(Name, Namespace,
                     Directory.GetFiles(Path, "*.flag").Select(fileName =>
                         Tuple.Create(System.IO.Path.GetFileNameWithoutExtension(fileName), (IEnumerable<Instruction>)Load(File.ReadAllText(fileName)))
                     )
-                ));
-
-
-                //new Flag.Compile.CSharp.ClassContents(Name,
-                //    Directory.GetFiles(Path, "*.flag").Select(fileName =>
-                //        Tuple.Create(System.IO.Path.GetFileNameWithoutExtension(fileName), (IEnumerable<Instruction>)Load(File.ReadAllText(fileName)))
-                //    )
-                //).Write(writer);
+                ), writer);
             }
 
             private string Path;

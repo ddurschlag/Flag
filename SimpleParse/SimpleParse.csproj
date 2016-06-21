@@ -43,7 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompiledTemplate.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -64,6 +63,10 @@
     <ProjectReference Include="..\Flag.Interpret\Flag.Interpret.csproj">
       <Project>{47cdbf5e-1e59-44db-99be-d02cd5c5acbd}</Project>
       <Name>Flag.Interpret</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Flag.VisualStudio\Flag.VisualStudio.csproj">
+      <Project>{75de4c88-5ae2-447f-a63f-2f5f6dccd881}</Project>
+      <Name>Flag.VisualStudio</Name>
     </ProjectReference>
     <ProjectReference Include="..\FlagParse\Flag.Parse.csproj">
       <Project>{f0603eab-d09a-4a1d-a616-5742cde16066}</Project>
