@@ -38,64 +38,26 @@ namespace SimpleParse
 
             using (var sw = new StringWriter(sb))
             {
-                new DirectoryCompiler(@"CSharp\Templates").Compile(sw);
+                new DirectoryCompiler(@"CSharp\Templates", "Flag.Compile.CSharp.Templates").Compile(sw);
             }
 
             File.WriteAllText("CompiledTemplate.cs", sb.ToString());
 
             Console.ReadLine();
-
-            //try
-            //{
-            //    new StatefulInMemoryParser() { { "half", "~||" } };
-            //}
-            //catch (Exception) { }
-
-            //IParser p = new StatefulInMemoryParser()
-            //{
-            //    {"raw","abc" },
-            //    {"t", "raw template contents" },
-            //    { "rend", "a~||~b" },
-            //    { "esc", @"\\\|\~" },
-            //    { "loop", "a~||t~b" },
-            //    { "loopInline", "a~|t|~b" },
-            //    { "call", "a~k||t~b" },
-            //    { "callInline", "a~k|t|~b" }
-            //};
-
-            //var de = new StronglyTypedDataAdapter().Adapt(
-            //    new Dictionary<string, string[]> {
-            //        {"First List", new[] {"Item A", "Item B" } },
-            //        {"Second List", new [] {"Item C", "Item D" } }
-            //    });
-
-            //IParser p2 = new StatefulInMemoryParser()
-            //    {
-            //        {"ListItem", "\t* ~||~\n" },
-            //        {"List", "~||ListItem~" },
-            //        {"Root", "First:\n~First List||List~\nSecond:\n~Second List||List~\n" }
-            //    };
-
-            //StringBuilder sb = new StringBuilder();
-            //using (var sw = new StringWriter(sb))
-            //{ new Interpretter(p2.Get("Root"), de).Write(sw); }
-            //Console.WriteLine(sb.ToString());
-
-
-            //Console.ReadLine();
         }
 
         public class DirectoryCompiler
         {
-            public DirectoryCompiler(string path)
+            public DirectoryCompiler(string path, string @namespace)
             {
                 Path = path;
+                Namespace = @namespace;
                 Name = new DirectoryInfo(path).Name;
             }
 
             public void Compile(TextWriter writer)
             {
-                new Templates(writer).Class(new Flag.Compile.CSharp.TypeViewModel(Name,
+                new Flag.Compile.CSharp.Templates.Templates(writer).Class(new Flag.Compile.CSharp.TypeViewModel(Name, Namespace,
                     Directory.GetFiles(Path, "*.flag").Select(fileName =>
                         Tuple.Create(System.IO.Path.GetFileNameWithoutExtension(fileName), (IEnumerable<Instruction>)Load(File.ReadAllText(fileName)))
                     )
@@ -111,6 +73,7 @@ namespace SimpleParse
 
             private string Path;
             private string Name;
+            private string Namespace;
 
             private static Instruction[] Load(string s)
             {

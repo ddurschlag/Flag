@@ -1,4 +1,3 @@
-﻿if ( ~ChildVariable|~||~|~ != null )
-{
+﻿if ( ~ChildVariable|~||~|~ != null ) {
 ~Template||Template~
 }

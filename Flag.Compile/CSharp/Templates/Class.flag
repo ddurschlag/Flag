@@ -1,16 +1,18 @@
 ﻿using System;
 using System.IO;
-public class ~Name|~||~|~ {
-    private TextWriter Writer;
-    private void Write(string s){Writer.Write(s);}
+namespace ~Namespace|~||~|~ {
+    public class ~Name|~||~|~ {
+        private TextWriter Writer;
+        private void Write(string s){Writer.Write(s);}
 
-    public ~Name|~||~|~(TextWriter writer){{Writer=writer;}}
+        public ~Name|~||~|~(TextWriter writer){{Writer=writer;}}
 
-    ~Templates|~|
+        ~Templates|~|
 
-    public void ~Item1|~||~|~(dynamic tArg) {
-        ~Item2||Template~
-    }   
+        public void ~Item1|~||~|~(dynamic tArg) {
+            ~Item2||Template~
+        }   
 
-    |~|~
+        |~|~
+    }
 }

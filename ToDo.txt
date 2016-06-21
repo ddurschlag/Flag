@@ -1,0 +1,4 @@
+Visual Studio Custom Tool support
+Compilation to JavaScript
+Optimization of Call to CallInline
+Strongly Typed ViewModel Generation
