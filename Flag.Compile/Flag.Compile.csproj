@@ -64,7 +64,7 @@
     <None Include="CSharp\Templates\Class.flag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="CSharp\Templates\Instruction.flag">
+    <None Include="CSharp\Templates\Instructions.flag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="CSharp\Templates\Loop.flag">

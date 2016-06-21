@@ -1,3 +1,4 @@
-﻿foreach ( var childElement in ~ContextVariable|~||~|~ ) {
+﻿if ( ~ContextVariable|~||~|~ != null )
+foreach ( var childElement in ~ContextVariable|~||~|~ ) {
 ~Name|~||~|~(childElement);
 }

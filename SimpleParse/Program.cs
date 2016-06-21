@@ -39,17 +39,9 @@ namespace SimpleParse
             using (var sw = new StringWriter(sb))
             {
                 new DirectoryCompiler(@"CSharp\Templates").Compile(sw);
-                //sw.WriteLine();
-                //sw.WriteLine();
-                //sw.WriteLine();
-                //new Templates(sw).TwoLists(new Dictionary<string, string[]> {
-                //    {"First List", new[] {"Item A", "Item B" } },
-                //    {"Second List", new [] {"Item C", "Item D" } }
-                //});
-            //    new DirectoryInterpreter("Templates").Interpret(sw, de, "TwoLists");
             }
 
-            Console.WriteLine(sb);
+            File.WriteAllText("CompiledTemplate.cs", sb.ToString());
 
             Console.ReadLine();
 
@@ -103,11 +95,18 @@ namespace SimpleParse
 
             public void Compile(TextWriter writer)
             {
-                new Flag.Compile.CSharp.ClassContents(Name,
+                new Templates(writer).Class(new Flag.Compile.CSharp.TypeViewModel(Name,
                     Directory.GetFiles(Path, "*.flag").Select(fileName =>
                         Tuple.Create(System.IO.Path.GetFileNameWithoutExtension(fileName), (IEnumerable<Instruction>)Load(File.ReadAllText(fileName)))
                     )
-                ).Write(writer);
+                ));
+
+
+                //new Flag.Compile.CSharp.ClassContents(Name,
+                //    Directory.GetFiles(Path, "*.flag").Select(fileName =>
+                //        Tuple.Create(System.IO.Path.GetFileNameWithoutExtension(fileName), (IEnumerable<Instruction>)Load(File.ReadAllText(fileName)))
+                //    )
+                //).Write(writer);
             }
 
             private string Path;

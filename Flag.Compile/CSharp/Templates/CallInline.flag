@@ -1,1 +1,4 @@
-﻿~Instructions||Instruction~
+﻿if ( ~ChildVariable|~||~|~ != null )
+{
+~Template||Template~
+}

@@ -13,10 +13,10 @@ namespace Flag.Compile.CSharp
         public TypeViewModel(string name, IEnumerable<Tuple<string, IEnumerable<Instruction>>> templates)
         {
             Name = name;
-            Templates = templates;
+            Templates = templates.Select(t => Tuple.Create(t.Item1, new TemplateViewModel(t.Item2, "tArg")));
         }
 
         public string Name { get; private set; }
-        private IEnumerable<Tuple<string, IEnumerable<Instruction>>> Templates;
+        public IEnumerable<Tuple<string, TemplateViewModel>> Templates;
     }
 }

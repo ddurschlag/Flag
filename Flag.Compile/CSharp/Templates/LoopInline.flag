@@ -1,3 +1,4 @@
-﻿foreach ( var ~ChildVariable|~||~|~ in ~ContextVariable|~||~|~ ) {
-~Instructions||Instruction~
+﻿if ( ~ContextVariable|~||~|~ != null )
+foreach ( var ~ChildVariable|~||~|~ in ~ContextVariable|~||~|~ ) {
+~Template||Template~
 }

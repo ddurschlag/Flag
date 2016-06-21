@@ -28,7 +28,7 @@ namespace Flag.Compile.CSharp
         public override void Visit(LoopInlineInstruction i)
         {
             var childElement = GetVar();
-            Write(string.Format(@"foreach ( var {0} in {1} ) {{", childElement, ElementName));
+            Write(string.Format(@"if ( {1} != null ) foreach ( var {0} in {1} ) {{", childElement, ElementName));
             var contents = new BlockContents(childElement, Writer);
             foreach (var subInstruction in i.Instructions)
                 contents.Visit(subInstruction);
@@ -38,22 +38,28 @@ namespace Flag.Compile.CSharp
 
         public override void Visit(CallInlineInstruction i)
         {
-            var childElement = string.Format("{0}[\"{1}\"]", ElementName, i.Key);
+            var childElement = string.Format("{0}.{1}", ElementName, i.Key);
             var contents = new BlockContents(childElement, Writer);
+
+            Write(string.Format(@"if ( {0} != null ) {{", childElement));
             foreach (var subInstruction in i.Instructions)
                 contents.Visit(subInstruction);
+            Write("}");
         }
 
         public override void Visit(CallInstruction i)
         {
-            var childElement = string.Format(@"{0}[""{1}""]", ElementName, i.Key);
+            var childElement = string.Format("{0}.{1}", ElementName, i.Key);
+
+            Write(string.Format(@"if ( {0} != null ) {{", childElement));
             Write(string.Format(@"{0}({1});", i.Name, childElement));
+            Write("}");
         }
 
         public override void Visit(LoopInstruction i)
         {
             var childElement = GetVar();
-            Write(string.Format(@"foreach ( var {0} in {1} ) {{", childElement, ElementName));
+            Write(string.Format(@"if ( {1} != null ) foreach ( var {0} in {1} ) {{", childElement, ElementName));
             Write(string.Format(@"{0}({1});", i.Name, childElement));
             Write("}");
         }

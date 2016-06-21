@@ -43,19 +43,19 @@ namespace Flag.Compile
             public override void Visit(LoopInlineInstruction i)
             {
                 var childVariable = GetVar();
-                Me.LoopInline = new LoopInlineViewModel { Instructions = i.Instructions.Select(ii => new InstructionViewModel(ii, childVariable)).ToArray(), ChildVariable = childVariable, ContextVariable = ContextVariable };
+                Me.LoopInline = new LoopInlineViewModel { Template = new TemplateViewModel(i.Instructions, childVariable), ChildVariable = childVariable, ContextVariable = ContextVariable };
             }
 
             public override void Visit(CallInstruction i)
             {
-                var childVariable = string.Format("{0}[\"{1}\"]", ContextVariable, i.Key.Replace("\"", "\"\""));
+                var childVariable = string.Format("{0}.{1}", ContextVariable, i.Key);
                 Me.Call = new CallViewModel { Name = i.Name, ChildVariable = childVariable };
             }
 
             public override void Visit(CallInlineInstruction i)
             {
-                var childVariable = string.Format("{0}[\"{1}\"]", ContextVariable, i.Key.Replace("\"", "\"\""));
-                Me.CallInline = new CallInlineViewModel { Instructions = i.Instructions.Select(ii=>new InstructionViewModel(ii, childVariable)).ToArray() };
+                var childVariable = string.Format("{0}.{1}", ContextVariable, i.Key);
+                Me.CallInline = new CallInlineViewModel { Template = new TemplateViewModel(i.Instructions, childVariable), ChildVariable = childVariable };
             }
 
 
@@ -71,9 +71,9 @@ namespace Flag.Compile
         }
 
         public class LoopViewModel { public string Name { get; set; } public string ContextVariable { get; set; } }
-        public class LoopInlineViewModel { public InstructionViewModel[] Instructions { get; set; } public string ChildVariable { get; set; } public string ContextVariable { get; set; } }
+        public class LoopInlineViewModel { public TemplateViewModel Template { get; set; } public string ChildVariable { get; set; } public string ContextVariable { get; set; } }
         public class CallViewModel { public string ChildVariable { get; set; } public string Name { get; set; } }
-        public class CallInlineViewModel { public InstructionViewModel[] Instructions { get; set; } }
+        public class CallInlineViewModel { public string ChildVariable { get; set; } public TemplateViewModel Template { get; set; } }
         public class RenderViewModel { public string ContextVariable { get; set; } }
         public class OutputViewModel { public string Text { get; set; } }
 

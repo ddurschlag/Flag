@@ -1,1 +1,4 @@
-﻿~Name|~||~|~(~ChildVariable|~||~|~)
+﻿if ( ~ChildVariable|~||~|~ != null )
+{
+~Name|~||~|~(~ChildVariable|~||~|~);
+}
