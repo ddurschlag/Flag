@@ -25,9 +25,9 @@ namespace Flag.Compile.CSharp
         public void Compile(TextWriter writer)
         {
             new Templates(writer).Class(new TypeViewModel(
-                Name,
+                "Templates",
                 Namespace,
-                new[] { Tuple.Create(Text, Load(Text)) })
+                new[] { Tuple.Create(Name, Load(Text)) })
             );
         }
 
