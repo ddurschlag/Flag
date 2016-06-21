@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="CSharp\BlockContents.cs" />
     <Compile Include="CSharp\ClassContents.cs" />
+    <Compile Include="CSharp\TemplateCompiler.cs" />
+    <Compile Include="CSharp\Templates.cs" />
     <Compile Include="CSharp\TypeViewModel.cs" />
     <Compile Include="InstructionViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

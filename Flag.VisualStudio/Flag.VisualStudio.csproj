@@ -48,6 +48,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FlagCustomTool.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Flag.Compile\Flag.Compile.csproj">
+      <Project>{9601a30d-f1ea-41c2-aaf5-114a4cdbdaad}</Project>
+      <Name>Flag.Compile</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using System.IO;
+
+using System;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using System.Runtime.InteropServices;
@@ -21,7 +23,10 @@ namespace Flag.VisualStudio
         public int Generate(string wszInputFilePath, string bstrInputFileContents, string wszDefaultNamespace,
           IntPtr[] rgbOutputFileContents, out uint pcbOutput, IVsGeneratorProgress pGenerateProgress)
         {
-            pcbOutput = ApplyText(bstrInputFileContents, rgbOutputFileContents);
+            StringBuilder sb = new StringBuilder();
+            using (var tw = new StringWriter(sb))
+                new Flag.Compile.CSharp.TemplateCompiler(bstrInputFileContents, wszDefaultNamespace, Path.GetFileNameWithoutExtension(wszInputFilePath)).Compile(tw);
+            pcbOutput = ApplyText(sb.ToString(), rgbOutputFileContents);
             return VSConstants.S_OK;
         }
 
