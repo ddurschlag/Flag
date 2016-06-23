@@ -13,6 +13,7 @@ using Flag.Parse.Tokens;
 using Flag.Parse.Instructions;
 using Flag.Parse;
 using Flag.Interpret;
+using System.Collections;
 
 namespace SimpleParse
 {
@@ -50,6 +51,127 @@ namespace SimpleParse
             File.WriteAllText("Call.cs", sb.ToString());
 
             Console.ReadLine();
+        }
+
+        public class VMTest
+        {
+            public static Root Example = new Root
+            {
+                Simple = { Text = "Foo" },
+                Weird = { Text = "Bar", RenderAndProperty = 3 },
+                SuperWeird = new NonSimpleList("A")
+                {
+                    "A",
+                    new Simple {Text="BAR" }
+                },
+                Multi = new MultiList {
+                "A",
+                new Simple{Text = "FOO" },
+                "B"
+                }
+            };
+
+            public class Root
+            {
+                public Simple Simple { get; set; }
+                public MapWithUnknowns Weird { get; set; }
+                public NonSimpleList SuperWeird { get; set; }
+                public MultiList Multi { get; set; }
+            }
+
+            public class Simple
+            {
+                public string Text { get; set; }
+            }
+
+            public class MapWithUnknowns
+            {
+                public string Text
+                {
+                    get; set;
+                }
+
+#warning Could not generate ViewModel for "RenderAndProperty"; falling back to dynamic
+                public dynamic RenderAndProperty { get; set; }
+            }
+
+            public class MultiList : IEnumerable<Simple>, IEnumerable<string>
+            {
+                public List<Simple> Simples = new List<Simple>();
+                public List<string> Strings = new List<string>();
+
+                public void Add(Simple @simple)
+                {
+                    Simples.Add(@simple);
+                }
+
+                public void Add(string @string)
+                {
+                    Strings.Add(@string);
+                }
+
+                public IEnumerator<Simple> GetEnumerator()
+                {
+                    return Simples.GetEnumerator();
+                }
+
+#warning Multiple loop types
+                IEnumerator IEnumerable.GetEnumerator()
+                {
+                    var error = new Exception("Conflicting list types");
+                    error.Data.Add("Types", string.Join(", ", new[] { typeof(Simple).ToString(), typeof(string).ToString() }));
+                    error.Data.Add("Class", typeof(NonSimpleList).ToString());
+                    throw error;
+                }
+
+                IEnumerator<string> IEnumerable<string>.GetEnumerator()
+                {
+                    return Strings.GetEnumerator();
+                }
+            }
+
+            public class NonSimpleList : IEnumerable<Simple>, IEnumerable<string>
+            {
+                public NonSimpleList(string text = null, List<Simple> simples = null, List<string> strings = null)
+                {
+                    Text = text;
+                    Simples = simples ?? new List<Simple>();
+                    Strings = strings ?? new List<string>();
+                }
+
+                public string Text { get; set; }
+                public List<Simple> Simples = new List<Simple>();
+                public List<string> Strings = new List<string>();
+
+                public void Add(Simple @simple)
+                {
+                    Simples.Add(@simple);
+                }
+
+                public void Add(string @string)
+                {
+                    Strings.Add(@string);
+                }
+
+                public IEnumerator<Simple> GetEnumerator()
+                {
+                    return Simples.GetEnumerator();
+                }
+
+#warning Multiple loop types
+                IEnumerator IEnumerable.GetEnumerator()
+                {
+                    var error = new Exception("Conflicting list types");
+                    error.Data.Add("Types", string.Join(", ", new[] { typeof(Simple).ToString(), typeof(string).ToString() }));
+                    error.Data.Add("Class", typeof(NonSimpleList).ToString());
+                    throw error;
+                }
+
+                IEnumerator<string> IEnumerable<string>.GetEnumerator()
+                {
+                    return Strings.GetEnumerator();
+                }
+            }
         }
 
         public class DirectoryCompiler
