@@ -8,11 +8,18 @@ namespace Flag.Compile.CSharp.ViewModelTypes
 {
     public class StringViewModel : ViewModelType
     {
+        public StringViewModel(string typeName)
+        {
+            _TypeName = typeName;
+        }
+
+        private string _TypeName;
+
         public override string TypeName
         {
             get
             {
-                return "string";
+                return _TypeName;
             }
         }
 

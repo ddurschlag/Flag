@@ -15,7 +15,6 @@ namespace Flag.Compile.CSharp.ViewModelTypes
         }
 
         private string _TypeName;
-
         public string EnumerableTypeName { get; private set; }
 
         public override string TypeName

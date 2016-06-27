@@ -90,12 +90,12 @@
     </Compile>
     <Compile Include="CSharp\TypeViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\ComplexViewModel.cs" />
-    <Compile Include="CSharp\ViewModelTypes\DynamicViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\ListViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\MultiLoopViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\PurePropertyViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\StringViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\ViewModelType.cs" />
+    <Compile Include="CSharp\ViewModelTypes\ViewModelTypeFactory.cs" />
     <Compile Include="CSharp\ViewModelTypes\ViewModelTypeVisitor.cs" />
     <Compile Include="InstructionViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

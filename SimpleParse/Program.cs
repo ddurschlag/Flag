@@ -55,6 +55,35 @@ namespace SimpleParse
 
         public class VMTest
         {
+            public class SecretList<T> : IEnumerable<T>
+            {
+                public SecretList(List<T> wrapped) { Wrapped = wrapped; }
+                private List<T> Wrapped;
+                public static implicit operator SecretList<T>(List<T> l) { return new SecretList<T>(l); }
+                public static implicit operator List<T>(SecretList<T> l) { return l.Wrapped; }
+
+                public void Add(T item) { Wrapped.Add(item); }
+
+                public IEnumerator<T> GetEnumerator()
+                {
+                    return Wrapped.GetEnumerator();
+                }
+
+                IEnumerator IEnumerable.GetEnumerator()
+                {
+                    return Wrapped.GetEnumerator();
+                }
+            }
+
+            public class SecretString
+            {
+                public SecretString(string wrapped) { Wrapped = wrapped; }
+                private string Wrapped;
+
+                public static implicit operator SecretString(string l) { return new SecretString(l); }
+                public static implicit operator string(SecretString l) { return l.Wrapped; }
+            }
+
             public static Root Example = new Root
             {
                 Simple = { Text = "Foo" },
@@ -81,12 +110,12 @@ namespace SimpleParse
 
             public class Simple
             {
-                public string Text { get; set; }
+                public SecretString Text { get; set; }
             }
 
             public class MapWithUnknowns
             {
-                public string Text
+                public SecretString Text
                 {
                     get; set;
                 }
@@ -95,10 +124,10 @@ namespace SimpleParse
                 public dynamic RenderAndProperty { get; set; }
             }
 
-            public class MultiList : IEnumerable<Simple>, IEnumerable<string>
+            public class MultiList : IEnumerable<Simple>, IEnumerable<SecretString>
             {
-                public List<Simple> Simples = new List<Simple>();
-                public List<string> Strings = new List<string>();
+                public SecretList<Simple> Simples = new List<Simple>();
+                public SecretList<SecretString> Strings = new List<SecretString>();
 
                 public void Add(Simple @simple)
                 {
@@ -124,15 +153,16 @@ namespace SimpleParse
                     throw error;
                 }
 
-                IEnumerator<string> IEnumerable<string>.GetEnumerator()
+                IEnumerator<SecretString> IEnumerable<SecretString>.GetEnumerator()
                 {
-                    return Strings.GetEnumerator();
+                    foreach (var x in Strings)
+                        yield return x;
                 }
             }
 
             public class NonSimpleList : IEnumerable<Simple>, IEnumerable<string>
             {
-                public NonSimpleList(string text = null, List<Simple> simples = null, List<string> strings = null)
+                public NonSimpleList(string text = null, SecretList<Simple> simples = null, SecretList<string> strings = null)
                 {
                     Text = text;
                     Simples = simples ?? new List<Simple>();
@@ -140,8 +170,8 @@ namespace SimpleParse
                 }
 
                 public string Text { get; set; }
-                public List<Simple> Simples = new List<Simple>();
-                public List<string> Strings = new List<string>();
+                public SecretList<Simple> Simples = new List<Simple>();
+                public SecretList<string> Strings = new List<string>();
 
                 public void Add(Simple @simple)
                 {

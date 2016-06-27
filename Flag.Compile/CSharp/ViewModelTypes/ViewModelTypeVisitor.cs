@@ -14,7 +14,6 @@ namespace Flag.Compile.CSharp.ViewModelTypes
         }
 
         public abstract void Visit(StringViewModel m);
-        public abstract void Visit(DynamicViewModel m);
         public abstract void Visit(ListViewModel m);
         public abstract void Visit(MultiLoopViewModel m);
         public abstract void Visit(PurePropertyViewModel m);
@@ -29,7 +28,6 @@ namespace Flag.Compile.CSharp.ViewModelTypes
         }
 
         public abstract T Visit(StringViewModel m);
-        public abstract T Visit(DynamicViewModel m);
         public abstract T Visit(ListViewModel m);
         public abstract T Visit(MultiLoopViewModel m);
         public abstract T Visit(PurePropertyViewModel m);
