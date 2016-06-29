@@ -1,0 +1,5 @@
+﻿public class ~TypeName|~||~|~
+{
+    ~PropertyTypePairs|~|
+          public ~Type|~||~|~ ~Name|~||~|~ { get; set; }|~|~
+}

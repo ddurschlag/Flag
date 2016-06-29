@@ -29,6 +29,7 @@ namespace SimpleParse
             //Test(@"a~k||t~b");
             //Test(@"a~k|t|~b");
 
+
             var de = new StronglyTypedDataSource().Adapt(
                 new Dictionary<string, string[]> {
                     {"First List", new[] {"Item A", "Item B" } },
@@ -37,6 +38,15 @@ namespace SimpleParse
 
             var sb = new StringBuilder();
 
+            using (var sw = new StringWriter(sb))
+            {
+                Flag.Compile.CSharp.Templates.Templates.ViewModel(new Flag.Compile.CSharp.ViewModelTypes.ViewModelViewModel(new Flag.Compile.CSharp.ViewModelTypes.ComplexViewModel("TestType", new[] { new Flag.Compile.CSharp.ViewModelTypes.PropertyInfo("string", "p1"), new Flag.Compile.CSharp.ViewModelTypes.PropertyInfo("object", "p2") }, new[] { "string", "object", "char" })), sw);
+            }
+
+            Console.WriteLine(sb.ToString());
+            Console.ReadLine();
+
+            sb = new StringBuilder();
             using (var sw = new StringWriter(sb))
             {
                 new DirectoryCompiler(@"CSharp\Templates", "Flag.Compile.CSharp.Templates").Compile(sw);
@@ -55,6 +65,70 @@ namespace SimpleParse
 
         public class VMTest
         {
+
+
+
+
+
+
+
+            #region GeneratedViewModel
+            public class TestType : IEnumerable, IEnumerable<string>, IEnumerable<object>, IEnumerable<char>
+            {
+                public TestType(string _p1 = null, object _p2 = null, List<string> _strings = null, List<object> _objects = null
+            , List<char> _chars = null, object __ignored = null)
+                {
+                    p1 = _p1;
+                    p2 = _p2;
+
+                    strings = _strings ?? new List<string>();
+                    objects = _objects ?? new List<object>();
+                    chars = _chars ?? new List<char>();
+
+                }
+
+
+
+                public string p1 { get; set; }
+                public object p2 { get; set; }
+
+
+                public List<string> strings = new List<string>();
+                public void Add(string @string) { strings.Add(@string); }
+                IEnumerator<string> IEnumerable<string>.GetEnumerator() { return strings.GetEnumerator(); }
+
+                public List<object> objects = new List<object>();
+                public void Add(object @object) { objects.Add(@object); }
+                IEnumerator<object> IEnumerable<object>.GetEnumerator() { return objects.GetEnumerator(); }
+
+                public List<char> chars = new List<char>();
+                public void Add(char @char) { chars.Add(@char); }
+                IEnumerator<char> IEnumerable<char>.GetEnumerator() { return chars.GetEnumerator(); }
+
+
+#warning Multiple loop types
+                IEnumerator IEnumerable.GetEnumerator()
+                {
+                    var error = new Exception("Conflicting list types");
+                    error.Data.Add("Types", string.Join(", ", new[] { "" , typeof(string).ToString(), typeof(object).ToString(), typeof(char).ToString() }));
+                    error.Data.Add("Class", typeof(TestType).ToString());
+                    throw error;
+                }
+
+            }
+            #endregion
+
+
+
+
+
+
+
+
+
+
+
+
             public class SecretList<T> : IEnumerable<T>
             {
                 public SecretList(List<T> wrapped) { Wrapped = wrapped; }

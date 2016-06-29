@@ -58,10 +58,20 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Class.flag</DependentUpon>
     </Compile>
+    <Compile Include="CSharp\Templates\ComplexViewModel.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ComplexViewModel.flag</DependentUpon>
+    </Compile>
     <Compile Include="CSharp\Templates\Instructions.gen.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Instructions.flag</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\Templates\ListViewModel.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ListViewModel.flag</DependentUpon>
     </Compile>
     <Compile Include="CSharp\Templates\Loop.gen.cs">
       <AutoGen>True</AutoGen>
@@ -73,30 +83,52 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>LoopInline.flag</DependentUpon>
     </Compile>
+    <Compile Include="CSharp\Templates\MultiLoopViewModel.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MultiLoopViewModel.flag</DependentUpon>
+    </Compile>
     <Compile Include="CSharp\Templates\Output.gen.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Output.flag</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\Templates\PurePropertyViewModel.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PurePropertyViewModel.flag</DependentUpon>
     </Compile>
     <Compile Include="CSharp\Templates\Render.gen.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Render.flag</DependentUpon>
     </Compile>
+    <Compile Include="CSharp\Templates\StringViewModel.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>StringViewModel.flag</DependentUpon>
+    </Compile>
     <Compile Include="CSharp\Templates\Template.gen.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Template.flag</DependentUpon>
     </Compile>
+    <Compile Include="CSharp\Templates\ViewModel.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ViewModel.flag</DependentUpon>
+    </Compile>
     <Compile Include="CSharp\TypeViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\ComplexViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\ListViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\MultiLoopViewModel.cs" />
+    <Compile Include="CSharp\ViewModelTypes\PropertyInfo.cs" />
     <Compile Include="CSharp\ViewModelTypes\PurePropertyViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\StringViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\ViewModelType.cs" />
     <Compile Include="CSharp\ViewModelTypes\ViewModelTypeFactory.cs" />
     <Compile Include="CSharp\ViewModelTypes\ViewModelTypeVisitor.cs" />
+    <Compile Include="CSharp\ViewModelTypes\ViewModelViewModel.cs" />
     <Compile Include="InstructionViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TemplateViewModel.cs" />
@@ -121,9 +153,17 @@
       <Generator>FlagTemplate</Generator>
       <LastGenOutput>Class.gen.cs</LastGenOutput>
     </None>
+    <None Include="CSharp\Templates\ComplexViewModel.flag">
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>ComplexViewModel.gen.cs</LastGenOutput>
+    </None>
     <None Include="CSharp\Templates\Instructions.flag">
       <Generator>FlagTemplate</Generator>
       <LastGenOutput>Instructions.gen.cs</LastGenOutput>
+    </None>
+    <None Include="CSharp\Templates\ListViewModel.flag">
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>ListViewModel.gen.cs</LastGenOutput>
     </None>
     <None Include="CSharp\Templates\Loop.flag">
       <Generator>FlagTemplate</Generator>
@@ -133,17 +173,33 @@
       <Generator>FlagTemplate</Generator>
       <LastGenOutput>LoopInline.gen.cs</LastGenOutput>
     </None>
+    <None Include="CSharp\Templates\MultiLoopViewModel.flag">
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>MultiLoopViewModel.gen.cs</LastGenOutput>
+    </None>
     <None Include="CSharp\Templates\Output.flag">
       <Generator>FlagTemplate</Generator>
       <LastGenOutput>Output.gen.cs</LastGenOutput>
+    </None>
+    <None Include="CSharp\Templates\PurePropertyViewModel.flag">
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>PurePropertyViewModel.gen.cs</LastGenOutput>
     </None>
     <None Include="CSharp\Templates\Render.flag">
       <Generator>FlagTemplate</Generator>
       <LastGenOutput>Render.gen.cs</LastGenOutput>
     </None>
+    <None Include="CSharp\Templates\StringViewModel.flag">
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>StringViewModel.gen.cs</LastGenOutput>
+    </None>
     <None Include="CSharp\Templates\Template.flag">
       <Generator>FlagTemplate</Generator>
       <LastGenOutput>Template.gen.cs</LastGenOutput>
+    </None>
+    <None Include="CSharp\Templates\ViewModel.flag">
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>ViewModel.gen.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

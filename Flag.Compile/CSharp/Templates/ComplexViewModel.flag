@@ -1,0 +1,30 @@
+﻿public class ~TypeName|~||~|~ : IEnumerable ~EnumerableTypeNames|~|, IEnumerable<~||~>|~|~
+{
+    public ~TypeName|~||~|~(~PropertyTypePairs|~| ~Type|~||~|~ _~Name|~||~|~ = null, |~|~ ~EnumerableTypeNames|~|List<~||~> _~||~s = null,  |~|~ object __ignored = null)
+    {
+        ~PropertyTypePairs|~|~Name|~||~|~ = _~Name|~||~|~;
+        |~|~
+        ~EnumerableTypeNames|~|~||~s = _~||~s ?? new List<~||~>();
+        |~|~
+    }
+
+
+    ~PropertyTypePairs|~|
+          public ~Type|~||~|~ ~Name|~||~|~ { get; set; }|~|~
+
+~EnumerableTypeNames|~|
+    public List<~||~> ~||~s = new List<~||~>();
+    public void Add(~||~ @~||~) { ~||~s.Add(@~||~); }
+    IEnumerator<~||~> IEnumerable<~||~>.GetEnumerator() { return ~||~s.GetEnumerator(); }
+    |~|~
+
+#warning Multiple loop types
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        var error = new Exception("Conflicting list types");
+        error.Data.Add("Types", string.Join(", ", new[] { "" ~EnumerableTypeNames|~|, typeof(~||~).ToString()|~|~ }));
+        error.Data.Add("Class", typeof(~TypeName|~||~|~).ToString());
+        throw error;
+    }
+
+}

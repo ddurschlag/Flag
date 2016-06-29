@@ -29,7 +29,7 @@ namespace Flag.Compile.CSharp.ViewModelTypes
 
             if (analysis.LoopCount == 0 && analysis.PropertyP)
             {
-                return new PurePropertyViewModel(name, analysis.Properties.Select(CreateTuple));
+                return new PurePropertyViewModel(name, analysis.Properties.Select(CreatePropertyInfo));
             }
 
             if (analysis.LoopCount > 1 && !analysis.PropertyP)
@@ -37,12 +37,12 @@ namespace Flag.Compile.CSharp.ViewModelTypes
                 return new MultiLoopViewModel(name, analysis.LoopTypes);
             }
 
-            return new ComplexViewModel(name, analysis.Properties.Select(CreateTuple), analysis.LoopTypes);
+            return new ComplexViewModel(name, analysis.Properties.Select(CreatePropertyInfo), analysis.LoopTypes);
         }
 
-        private static Tuple<string, string> CreateTuple(KeyValuePair<string, string> kvp)
+        private static PropertyInfo CreatePropertyInfo(KeyValuePair<string, string> kvp)
         {
-            return Tuple.Create(kvp.Key, kvp.Value);
+            return new PropertyInfo(kvp.Value, kvp.Key);
         }
 
         private class ViewModelAnalysis : InstructionVisitor

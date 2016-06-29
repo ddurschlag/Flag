@@ -1,0 +1,19 @@
+﻿public class ~TypeName|~||~|~ : IEnumerable<~EnumerableTypeName|~||~|~>
+{
+    public ~TypeName|~||~|~(List<T> wrapped) { Wrapped = wrapped; }
+    private List<T> Wrapped;
+    public static implicit operator ~TypeName|~||~|~<T>(List<T> l) { return new ~TypeName|~||~|~<T>(l); }
+    public static implicit operator List<T>(~TypeName|~||~|~<T> l) { return l.Wrapped; }
+
+    public void Add(T item) { Wrapped.Add(item); }
+
+    public IEnumerator<T> GetEnumerator()
+    {
+        return Wrapped.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return Wrapped.GetEnumerator();
+    }
+}

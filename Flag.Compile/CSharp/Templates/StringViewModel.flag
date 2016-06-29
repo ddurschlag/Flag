@@ -1,0 +1,8 @@
+﻿public class ~TypeName|~||~|~
+{
+    private ~TypeName|~||~|~(string wrapped) { Wrapped = wrapped; }
+    private string Wrapped;
+
+    public static implicit operator ~TypeName|~||~|~(string l) { return new ~TypeName|~||~|~(l); }
+    public static implicit operator string(~TypeName|~||~|~ l) { return l.Wrapped; }
+}

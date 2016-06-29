@@ -8,7 +8,7 @@ namespace Flag.Compile.CSharp.ViewModelTypes
 {
     public class ComplexViewModel : ViewModelType
     {
-        public ComplexViewModel(string typeName, IEnumerable<Tuple<string, string>> propertyTypePairs, IEnumerable<string> enumerableTypeNames)
+        public ComplexViewModel(string typeName, IEnumerable<PropertyInfo> propertyTypePairs, IEnumerable<string> enumerableTypeNames)
         {
             _TypeName = typeName;
             PropertyTypePairs = propertyTypePairs.ToArray();
@@ -16,7 +16,7 @@ namespace Flag.Compile.CSharp.ViewModelTypes
         }
 
         private string _TypeName;
-        public IEnumerable<Tuple<string, string>> PropertyTypePairs { get; private set; }
+        public IEnumerable<PropertyInfo> PropertyTypePairs { get; private set; }
         public IEnumerable<string> EnumerableTypeNames { get; private set; }
 
         public override string TypeName

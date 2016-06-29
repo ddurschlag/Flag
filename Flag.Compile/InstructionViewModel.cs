@@ -9,10 +9,6 @@ namespace Flag.Compile
     using Flag.Parse.Instructions;
     public class InstructionViewModel
     {
-        static int i = 0;
-
-        private static string GetVar() { return "anon_" + (i++); }
-
         public InstructionViewModel(Instruction instruction, string contextVariable)
         {
             new Assigner(this, contextVariable).Visit(instruction);
@@ -27,6 +23,10 @@ namespace Flag.Compile
 
         private class Assigner : InstructionVisitor
         {
+            static int i = 0;
+
+            private static string GetVar() { return "anon_" + (i++); }
+
             public Assigner(InstructionViewModel me, string contextVariable)
             {
                 Me = me;
