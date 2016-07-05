@@ -9,7 +9,7 @@ namespace Flag.Compile.CSharp.ViewModelTypes
     using Flag.Parse.Instructions;
     public class ViewModelTypeFactory
     {
-        public ViewModelType Manufacture(string name, IEnumerable<Instruction> instructions)
+        public IEnumerable<ViewModelType> Manufacture(string name, IEnumerable<Instruction> instructions)
         {
             var analysis = new ViewModelAnalysis(this);
             foreach (var instruction in instructions)
@@ -18,26 +18,30 @@ namespace Flag.Compile.CSharp.ViewModelTypes
             if (analysis.RenderP)
             {
                 if (analysis.LoopCount == 0 && !analysis.PropertyP)
-                    return new StringViewModel(name);
+                    yield return new StringViewModel(name);
                 else
                     throw new Exception("Rendering is not compatible with other operations");
             }
             if (!analysis.PropertyP && analysis.LoopCount == 1)
             {
-                return new ListViewModel(name, analysis.LoopTypes.Single());
+                yield return new ListViewModel(name, analysis.LoopTypes.Single());
             }
 
             if (analysis.LoopCount == 0 && analysis.PropertyP)
             {
-                return new PurePropertyViewModel(name, analysis.Properties.Select(CreatePropertyInfo));
+                yield return new PurePropertyViewModel(name, analysis.Properties.Select(CreatePropertyInfo));
             }
 
             if (analysis.LoopCount > 1 && !analysis.PropertyP)
             {
-                return new MultiLoopViewModel(name, analysis.LoopTypes);
+                yield return new MultiLoopViewModel(name, analysis.LoopTypes);
             }
 
-            return new ComplexViewModel(name, analysis.Properties.Select(CreatePropertyInfo), analysis.LoopTypes);
+            if ( analysis.LoopCount > 0 && analysis.PropertyP)
+                yield return new ComplexViewModel(name, analysis.Properties.Select(CreatePropertyInfo), analysis.LoopTypes);
+
+            foreach (var innerType in analysis.NestedTypes)
+                yield return innerType;
         }
 
         private static PropertyInfo CreatePropertyInfo(KeyValuePair<string, string> kvp)
@@ -56,12 +60,13 @@ namespace Flag.Compile.CSharp.ViewModelTypes
             private List<string> _LoopTypes = new List<string>();
             private Dictionary<string, string> MapTypes = new Dictionary<string, string>();
             private List<ViewModelType> InnerTypes = new List<ViewModelType>();
-            int i = 0;
+            private static int i = 0;
 
-            private string GetInnerTypeName() { return "InnerType_" + (i++); }
+            private static string GetInnerTypeName() { return "InnerType_" + (i++); }
 
             public int LoopCount { get { return _LoopTypes.Count; } }
             public IEnumerable<string> LoopTypes { get { return _LoopTypes; } }
+            public IEnumerable<ViewModelType> NestedTypes { get { return InnerTypes; } }
 
             public bool RenderP { get; private set; }
 
@@ -81,29 +86,31 @@ namespace Flag.Compile.CSharp.ViewModelTypes
 
             public override void Visit(LoopInstruction i)
             {
-                _LoopTypes.Add(i.Name);
+                _LoopTypes.Add(i.Name + "ViewModel");
             }
 
             public override void Visit(LoopInlineInstruction i)
             {
-                _LoopTypes.Add(ManufactureInnerType(i.Instructions));
+                _LoopTypes.Add(ManufactureInnerType(GetInnerTypeName(), i.Instructions));
             }
 
-            private string ManufactureInnerType(IEnumerable<Instruction> instructions)
+            private string ManufactureInnerType(string name, IEnumerable<Instruction> instructions)
             {
-                var loopType = Parent.Manufacture(GetInnerTypeName(), instructions);
-                InnerTypes.Add(loopType);
-                return loopType.TypeName;
+                var innerTypes = Parent.Manufacture(name, instructions).ToArray();
+                InnerTypes.AddRange(innerTypes);
+                return innerTypes.First().TypeName; //This is a hack. Should really return the requested type in a more "privileged" position
             }
 
             public override void Visit(CallInstruction i)
             {
-                MapTypes.Add(i.Key, i.Name);
+                MapTypes.Add(i.Key, i.Name + "ViewModel");
             }
 
             public override void Visit(CallInlineInstruction i)
             {
-                MapTypes.Add(i.Key, ManufactureInnerType(i.Instructions));
+                //TODO: Different calls on same property
+                if (!MapTypes.ContainsKey(i.Key))//We've already handled this property.
+                    MapTypes.Add(i.Key, ManufactureInnerType(i.Key + "_" + GetInnerTypeName(), i.Instructions));
             }
         }
     }

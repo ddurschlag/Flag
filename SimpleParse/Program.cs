@@ -21,6 +21,7 @@ namespace SimpleParse
     {
         static void Main(string[] args)
         {
+
             //Test("abc");
             //Test("a~||~b");
             //Test(@"\\\|\~");
@@ -29,6 +30,29 @@ namespace SimpleParse
             //Test(@"a~k||t~b");
             //Test(@"a~k|t|~b");
 
+            var ins = Test(@"using System;
+using System.IO;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace ~Namespace|~||~|~ {
+    public partial class ~Name|~||~|~ {
+        ~Templates|~|
+
+        public static void ~Item1|~||~|~(dynamic tArg, TextWriter writer) {
+            ~Item2||Template~
+        }   
+
+        |~|~
+
+        ~ViewModels|~||ViewModel~|~
+    }
+}");
+
+            var types = new Flag.Compile.CSharp.ViewModelTypes.ViewModelTypeFactory().Manufacture("Class", ins).GroupBy(vmt=>vmt.TypeName).ToDictionary(g=>g.Key,g=>g.ToArray());
+
+
+            Console.ReadLine();
 
             var de = new StronglyTypedDataSource().Adapt(
                 new Dictionary<string, string[]> {

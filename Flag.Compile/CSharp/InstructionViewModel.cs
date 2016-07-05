@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Flag.Compile
+namespace Flag.Compile.CSharp
 {
     using Flag.Parse.Instructions;
     public class InstructionViewModel

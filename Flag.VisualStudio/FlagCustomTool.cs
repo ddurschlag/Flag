@@ -23,11 +23,30 @@ namespace Flag.VisualStudio
         public int Generate(string wszInputFilePath, string bstrInputFileContents, string wszDefaultNamespace,
           IntPtr[] rgbOutputFileContents, out uint pcbOutput, IVsGeneratorProgress pGenerateProgress)
         {
-            StringBuilder sb = new StringBuilder();
-            using (var tw = new StringWriter(sb))
-                new Flag.Compile.CSharp.TemplateCompiler(bstrInputFileContents, wszDefaultNamespace, Path.GetFileNameWithoutExtension(wszInputFilePath)).Compile(tw);
-            pcbOutput = ApplyText(sb.ToString(), rgbOutputFileContents);
-            return VSConstants.S_OK;
+            StringBuilder consoleOut = new StringBuilder();
+            using (var consoleWriter = new StringWriter(consoleOut))
+            {
+                StringBuilder sb = new StringBuilder();
+                var originalOut = Console.Out;
+                try
+                {
+                    Console.SetOut(consoleWriter);
+                    using (var tw = new StringWriter(sb))
+                        new Flag.Compile.CSharp.TemplateCompiler(bstrInputFileContents, wszDefaultNamespace, Path.GetFileNameWithoutExtension(wszInputFilePath)).Compile(tw);
+                }
+                catch (Exception ex)
+                {
+                    sb.AppendLine("/*An exception occured. Please see output for details.*/");
+                    Console.Write(ex);
+                }
+                finally
+                {
+                    Console.SetOut(originalOut);
+                    Console.WriteLine(consoleOut.ToString());
+                }
+                pcbOutput = ApplyText(sb.ToString(), rgbOutputFileContents);
+                return VSConstants.S_OK;
+            }
         }
 
         private static uint ApplyText(string text, IntPtr[] rgbOutputFileContents)
