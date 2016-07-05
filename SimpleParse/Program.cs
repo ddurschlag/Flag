@@ -49,7 +49,7 @@ namespace ~Namespace|~||~|~ {
     }
 }");
 
-            var types = new Flag.Compile.CSharp.ViewModelTypes.ViewModelTypeFactory().Manufacture("Class", ins).GroupBy(vmt=>vmt.TypeName).ToDictionary(g=>g.Key,g=>g.ToArray());
+            var types = new Flag.Compile.CSharp.ViewModelTypes.ViewModelTypeFactory().Manufacture("Class", ins).GroupBy(vmt => vmt.TypeName).ToDictionary(g => g.Key, g => g.ToArray());
 
 
             Console.ReadLine();
@@ -64,19 +64,37 @@ namespace ~Namespace|~||~|~ {
 
             using (var sw = new StringWriter(sb))
             {
-                Flag.Compile.CSharp.Templates.Templates.ViewModel(new Flag.Compile.CSharp.ViewModelTypes.ViewModelViewModel(new Flag.Compile.CSharp.ViewModelTypes.ComplexViewModel("TestType", new[] { new Flag.Compile.CSharp.ViewModelTypes.PropertyInfo("string", "p1"), new Flag.Compile.CSharp.ViewModelTypes.PropertyInfo("object", "p2") }, new[] { "string", "object", "char" })), sw);
+                var etns = new List<Flag.Compile.CSharp.Templates.Templates.InnerType_11> { "string", "object", "char" };
+                var ptps = new List<Flag.Compile.CSharp.Templates.Templates.InnerType_13>
+                {
+                    new Flag.Compile.CSharp.Templates.Templates.InnerType_13 { Name = "p1", Type = "string" },
+                    new Flag.Compile.CSharp.Templates.Templates.InnerType_13 { Name = "p2", Type = "object" }
+                };
+
+                var cvm = new Flag.Compile.CSharp.Templates.Templates.ComplexViewModelViewModel()
+                {
+                    TypeName = "TestType",
+                    EnumerableTypeNames = etns,
+                    PropertyTypePairs = ptps
+                };
+
+                Flag.Compile.CSharp.Templates.Templates.ViewModel(new Flag.Compile.CSharp.Templates.Templates.ViewModelViewModel()
+                {
+                    Complex = cvm
+                },
+                sw);
             }
 
             Console.WriteLine(sb.ToString());
             Console.ReadLine();
 
-            sb = new StringBuilder();
-            using (var sw = new StringWriter(sb))
-            {
-                new DirectoryCompiler(@"CSharp\Templates", "Flag.Compile.CSharp.Templates").Compile(sw);
-            }
+            //sb = new StringBuilder();
+            //using (var sw = new StringWriter(sb))
+            //{
+            //    new DirectoryCompiler(@"CSharp\Templates", "Flag.Compile.CSharp.Templates").Compile(sw);
+            //}
 
-            File.WriteAllText("CompiledTemplate.cs", sb.ToString());
+            //File.WriteAllText("CompiledTemplate.cs", sb.ToString());
 
             sb = new StringBuilder();
             using (var tw = new StringWriter(sb))
@@ -134,7 +152,7 @@ namespace ~Namespace|~||~|~ {
                 IEnumerator IEnumerable.GetEnumerator()
                 {
                     var error = new Exception("Conflicting list types");
-                    error.Data.Add("Types", string.Join(", ", new[] { "" , typeof(string).ToString(), typeof(object).ToString(), typeof(char).ToString() }));
+                    error.Data.Add("Types", string.Join(", ", new[] { "", typeof(string).ToString(), typeof(object).ToString(), typeof(char).ToString() }));
                     error.Data.Add("Class", typeof(TestType).ToString());
                     throw error;
                 }
@@ -302,41 +320,41 @@ namespace ~Namespace|~||~|~ {
             }
         }
 
-        public class DirectoryCompiler
-        {
-            public DirectoryCompiler(string path, string @namespace)
-            {
-                Path = path;
-                Namespace = @namespace;
-                Name = new DirectoryInfo(path).Name;
-            }
+        //public class DirectoryCompiler
+        //{
+        //    public DirectoryCompiler(string path, string @namespace)
+        //    {
+        //        Path = path;
+        //        Namespace = @namespace;
+        //        Name = new DirectoryInfo(path).Name;
+        //    }
 
-            public void Compile(TextWriter writer)
-            {
-                Flag.Compile.CSharp.Templates.Templates.Class(new Flag.Compile.CSharp.TypeViewModel(Name, Namespace,
-                    Directory.GetFiles(Path, "*.flag").Select(fileName =>
-                        Tuple.Create(System.IO.Path.GetFileNameWithoutExtension(fileName), (IEnumerable<Instruction>)Load(File.ReadAllText(fileName)))
-                    )
-                ), writer);
-            }
+        //    public void Compile(TextWriter writer)
+        //    {
+        //        Flag.Compile.CSharp.Templates.Templates.Class(new Flag.Compile.CSharp.TypeViewModel(Name, Namespace,
+        //            Directory.GetFiles(Path, "*.flag").Select(fileName =>
+        //                Tuple.Create(System.IO.Path.GetFileNameWithoutExtension(fileName), (IEnumerable<Instruction>)Load(File.ReadAllText(fileName)))
+        //            )
+        //        ), writer);
+        //    }
 
-            private string Path;
-            private string Name;
-            private string Namespace;
+        //    private string Path;
+        //    private string Name;
+        //    private string Namespace;
 
-            private static Instruction[] Load(string s)
-            {
-                var tokens = new Tokenizer().Tokenize(s);
-                var structures = new Structurizer().Structurize(tokens).ToArray();
-                var instructions = new Parser().Parse(structures).ToArray();
-                Console.WriteLine("input: " + s);
-                Console.WriteLine("tokens: " + string.Join(" ", tokens));
-                Console.WriteLine("structures: " + string.Join<Structure>(" ", structures));
-                Console.WriteLine("instructions: " + string.Join<Instruction>(" ", instructions));
-                Console.WriteLine();
-                return instructions;
-            }
-        }
+        //    private static Instruction[] Load(string s)
+        //    {
+        //        var tokens = new Tokenizer().Tokenize(s);
+        //        var structures = new Structurizer().Structurize(tokens).ToArray();
+        //        var instructions = new Parser().Parse(structures).ToArray();
+        //        Console.WriteLine("input: " + s);
+        //        Console.WriteLine("tokens: " + string.Join(" ", tokens));
+        //        Console.WriteLine("structures: " + string.Join<Structure>(" ", structures));
+        //        Console.WriteLine("instructions: " + string.Join<Instruction>(" ", instructions));
+        //        Console.WriteLine();
+        //        return instructions;
+        //    }
+        //}
 
         public class DirectoryInterpreter
         {

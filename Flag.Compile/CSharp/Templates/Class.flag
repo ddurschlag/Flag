@@ -7,7 +7,7 @@ namespace ~Namespace|~||~|~ {
     public partial class ~Name|~||~|~ {
         ~Templates|~|
 
-        public static void ~Item1|~||~|~(dynamic tArg, TextWriter writer) {
+        public static void ~Item1|~||~|~(~Item1|~||~|~ViewModel tArg, TextWriter writer) {
             ~Item2||Template~
         }   
 
