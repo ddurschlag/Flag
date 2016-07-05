@@ -18,6 +18,7 @@ namespace Flag.Compile.CSharp.ViewModelTypes
         public abstract void Visit(MultiLoopViewModel m);
         public abstract void Visit(PurePropertyViewModel m);
         public abstract void Visit(ComplexViewModel m);
+        public abstract void Visit(LabelViewModel m);
     }
 
     public abstract class ViewModelTypeVisitor<T>
@@ -32,5 +33,6 @@ namespace Flag.Compile.CSharp.ViewModelTypes
         public abstract T Visit(MultiLoopViewModel m);
         public abstract T Visit(PurePropertyViewModel m);
         public abstract T Visit(ComplexViewModel m);
+        public abstract T Visit(LabelViewModel m);
     }
 }

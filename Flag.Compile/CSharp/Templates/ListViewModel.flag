@@ -1,6 +1,6 @@
 ﻿public class ~TypeName|~||~|~ : IEnumerable<~EnumerableTypeName|~||~|~>
 {
-    public ~TypeName|~||~|~(List<~EnumerableTypeName|~||~|~> wrapped) { Wrapped = wrapped; }
+    private ~TypeName|~||~|~(List<~EnumerableTypeName|~||~|~> wrapped) { Wrapped = wrapped; }
     private List<~EnumerableTypeName|~||~|~> Wrapped;
     public static implicit operator ~TypeName|~||~|~(List<~EnumerableTypeName|~||~|~> l) { return new ~TypeName|~||~|~(l); }
     public static implicit operator List<~EnumerableTypeName|~||~|~>(~TypeName|~||~|~ l) { return l.Wrapped; }

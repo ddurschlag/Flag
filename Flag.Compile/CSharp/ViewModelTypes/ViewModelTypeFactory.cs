@@ -29,7 +29,10 @@ namespace Flag.Compile.CSharp.ViewModelTypes
 
             if (analysis.LoopCount == 0 && analysis.PropertyP)
             {
-                yield return new PurePropertyViewModel(name, analysis.Properties.Select(CreatePropertyInfo));
+                if (analysis.Properties.Count == 1)
+                    yield return new LabelViewModel(name, analysis.Properties.Select(CreatePropertyInfo).Single());
+                else
+                    yield return new PurePropertyViewModel(name, analysis.Properties.Select(CreatePropertyInfo));
             }
 
             if (analysis.LoopCount > 1 && !analysis.PropertyP)
@@ -37,7 +40,7 @@ namespace Flag.Compile.CSharp.ViewModelTypes
                 yield return new MultiLoopViewModel(name, analysis.LoopTypes);
             }
 
-            if ( analysis.LoopCount > 0 && analysis.PropertyP)
+            if (analysis.LoopCount > 0 && analysis.PropertyP)
                 yield return new ComplexViewModel(name, analysis.Properties.Select(CreatePropertyInfo), analysis.LoopTypes);
 
             foreach (var innerType in analysis.NestedTypes)

@@ -18,6 +18,7 @@ namespace Flag.Compile.CSharp.ViewModelTypes
         public PurePropertyViewModel PureProperty { get; private set; }
         public MultiLoopViewModel MultiLoop { get; private set; }
         public ComplexViewModel Complex { get; private set; }
+        public LabelViewModel Label { get; private set; }
 
         private class Assigner : ViewModelTypeVisitor
         {
@@ -51,6 +52,11 @@ namespace Flag.Compile.CSharp.ViewModelTypes
             public override void Visit(StringViewModel m)
             {
                 Me.String = m;
+            }
+
+            public override void Visit(LabelViewModel m)
+            {
+                Me.Label = m;
             }
         }
     }

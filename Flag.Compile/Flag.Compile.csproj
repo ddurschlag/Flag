@@ -69,6 +69,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Instructions.flag</DependentUpon>
     </Compile>
+    <Compile Include="CSharp\Templates\LabelViewModel.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LabelViewModel.flag</DependentUpon>
+    </Compile>
     <Compile Include="CSharp\Templates\ListViewModel.gen.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -121,6 +126,7 @@
     </Compile>
     <Compile Include="CSharp\TypeViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\ComplexViewModel.cs" />
+    <Compile Include="CSharp\ViewModelTypes\LabelViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\ListViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\MultiLoopViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\PropertyInfo.cs" />
@@ -161,6 +167,10 @@
     <None Include="CSharp\Templates\Instructions.flag">
       <Generator>FlagTemplate</Generator>
       <LastGenOutput>Instructions.gen.cs</LastGenOutput>
+    </None>
+    <None Include="CSharp\Templates\LabelViewModel.flag">
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>LabelViewModel.gen.cs</LastGenOutput>
     </None>
     <None Include="CSharp\Templates\ListViewModel.flag">
       <Generator>FlagTemplate</Generator>

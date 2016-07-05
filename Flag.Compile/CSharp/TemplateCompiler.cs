@@ -28,7 +28,7 @@ namespace Flag.Compile.CSharp
             var instructions = Load(Text);
             var templates = new List<CS.InnerType_6>
             {
-                new CS.InnerType_6 { Item1 = Name, Item2 = new CS.TemplateViewModel { Instructions = instructions.Select(ic.Visit).ToList() } }
+                new CS.InnerType_6 { Item1 = Name, Item2 = (CS.InstructionsViewModel)instructions.Select(ic.Visit).ToList() }
             };
 
             var viewModels = new ViewModelTypeFactory().Manufacture(Name + "ViewModel", instructions).Select(vc.Visit).ToList();
@@ -63,7 +63,7 @@ namespace Flag.Compile.CSharp
                 {
                     MultiLoop = new Templates.Templates.MultiLoopViewModelViewModel
                     {
-                        EnumerableTypeNames = m.EnumerableTypeNames.Cast<CS.InnerType_25>().ToList(),
+                        EnumerableTypeNames = m.EnumerableTypeNames.Cast<CS.InnerType_29>().ToList(),
                         TypeName = m.TypeName
                     }
                 };
@@ -89,7 +89,7 @@ namespace Flag.Compile.CSharp
                     PureProperty = new CS.PurePropertyViewModelViewModel
                     {
                         TypeName = m.TypeName,
-                        PropertyTypePairs = m.PropertyTypePairs.Select(ptp => new CS.InnerType_29 { Name = ptp.Name, Type = ptp.Type }).ToList()
+                        PropertyTypePairs = m.PropertyTypePairs.Select(ptp => new CS.InnerType_33 { Name = ptp.Name, Type = ptp.Type }).ToList()
                     }
                 };
             }
@@ -110,9 +110,18 @@ namespace Flag.Compile.CSharp
             {
                 return new CS.ViewModelViewModel
                 {
-                    String = new CS.StringViewModelViewModel
+                    String = (CS.TypeName_InnerType_37)m.TypeName
+                };
+            }
+
+            public override CS.ViewModelViewModel Visit(LabelViewModel m)
+            {
+                return new CS.ViewModelViewModel
+                {
+                    Label = new Templates.Templates.LabelViewModelViewModel
                     {
-                        TypeName = m.TypeName
+                        TypeName = m.TypeName,
+                        Property = new Templates.Templates.Property_InnerType_18 { Name = m.Property.Name, Type = m.Property.Type }
                     }
                 };
             }
@@ -163,10 +172,7 @@ namespace Flag.Compile.CSharp
                     CallInline = new CS.CallInlineViewModel
                     {
                         ChildVariable = childVariable,
-                        Template = new CS.TemplateViewModel
-                        {
-                            Instructions = i.Instructions.Select(new InstructionConverter(childVariable).Visit).ToList()
-                        }
+                        Template = (CS.InstructionsViewModel)i.Instructions.Select(new InstructionConverter(childVariable).Visit).ToList()
                     }
                 };
             }
@@ -178,10 +184,7 @@ namespace Flag.Compile.CSharp
                 {
                     LoopInline = new CS.LoopInlineViewModel
                     {
-                        Template = new CS.TemplateViewModel
-                        {
-                            Instructions = i.Instructions.Select(new InstructionConverter(childVariable).Visit).ToList()
-                        },
+                        Template = (CS.InstructionsViewModel)i.Instructions.Select(new InstructionConverter(childVariable).Visit).ToList(),
                         ChildVariable = childVariable,
                         ContextVariable = ContextVariable
                     }
@@ -192,10 +195,7 @@ namespace Flag.Compile.CSharp
             {
                 return new CS.InnerType_16
                 {
-                    Render = new CS.RenderViewModel
-                    {
-                        ContextVariable = ContextVariable
-                    }
+                    Render = (CS.ContextVariable_InnerType_36)ContextVariable
                 };
             }
 
@@ -203,10 +203,7 @@ namespace Flag.Compile.CSharp
             {
                 return new CS.InnerType_16
                 {
-                    Output = new CS.OutputViewModel
-                    {
-                        Text = i.Text.Replace("\"", "\"\"")
-                    }
+                    Output = (CS.Text_InnerType_30)i.Text.Replace("\"", "\"\"")
                 };
             }
         }
