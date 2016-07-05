@@ -5,10 +5,12 @@ using System.Linq;
 
 namespace Flag.Compile.CSharp
 {
+    using Templates;
+    using ViewModelTypes;
     using Parse;
     using Parse.Instructions;
     using Parse.Structures;
-    using Templates;
+    using CS = Templates.Templates;
     public class TemplateCompiler
     {
         public TemplateCompiler(string text, string @namespace, string name)
@@ -21,16 +23,25 @@ namespace Flag.Compile.CSharp
         public void Compile(TextWriter writer)
         {
             var ic = new InstructionConverter("tArg");
-            Templates.Templates.Class(
-            new Templates.Templates.ClassViewModel()
-                {
-                    Name = "Templates",
-                    Namespace = Namespace,
-                    Templates = { new Templates.Templates.InnerType_6() {
-                        Item1 = Name,
-                        Item2 = new Templates.Templates.TemplateViewModel() { Instructions = Load(Text).Select(ic.Visit).ToList() }
-                    } }
-                },
+            var vc = new ViewModelConverter();
+
+            var instructions = Load(Text);
+            var templates = new List<CS.InnerType_6>
+            {
+                new CS.InnerType_6 { Item1 = Name, Item2 = new CS.TemplateViewModel { Instructions = instructions.Select(ic.Visit).ToList() } }
+            };
+
+            var viewModels = new ViewModelTypeFactory().Manufacture(Name + "ViewModel", instructions).Select(vc.Visit).ToList();
+
+
+            CS.Class(
+            new CS.ClassViewModel()
+            {
+                Name = "Templates",
+                Namespace = Namespace,
+                Templates = templates,
+                ViewModels = viewModels
+            },
                 writer
             );
         }
@@ -44,7 +55,70 @@ namespace Flag.Compile.CSharp
             return new Parser().Parse(new Structurizer().Structurize(new Tokenizer().Tokenize(s)));
         }
 
-        private class InstructionConverter : InstructionVisitor<Templates.Templates.InnerType_16>
+        private class ViewModelConverter : ViewModelTypes.ViewModelTypeVisitor<CS.ViewModelViewModel>
+        {
+            public override CS.ViewModelViewModel Visit(MultiLoopViewModel m)
+            {
+                return new CS.ViewModelViewModel
+                {
+                    MultiLoop = new Templates.Templates.MultiLoopViewModelViewModel
+                    {
+                        EnumerableTypeNames = m.EnumerableTypeNames.Cast<CS.InnerType_25>().ToList(),
+                        TypeName = m.TypeName
+                    }
+                };
+            }
+
+            public override CS.ViewModelViewModel Visit(ComplexViewModel m)
+            {
+                return new CS.ViewModelViewModel
+                {
+                    Complex = new CS.ComplexViewModelViewModel
+                    {
+                        EnumerableTypeNames = m.EnumerableTypeNames.Cast<CS.InnerType_11>().ToList(),
+                        TypeName = m.TypeName,
+                        PropertyTypePairs = m.PropertyTypePairs.Select(ptp => new CS.InnerType_13 { Name = ptp.Name, Type = ptp.Type }).ToList()
+                    }
+                };
+            }
+
+            public override CS.ViewModelViewModel Visit(PurePropertyViewModel m)
+            {
+                return new CS.ViewModelViewModel
+                {
+                    PureProperty = new CS.PurePropertyViewModelViewModel
+                    {
+                        TypeName = m.TypeName,
+                        PropertyTypePairs = m.PropertyTypePairs.Select(ptp => new CS.InnerType_29 { Name = ptp.Name, Type = ptp.Type }).ToList()
+                    }
+                };
+            }
+
+            public override CS.ViewModelViewModel Visit(ListViewModel m)
+            {
+                return new CS.ViewModelViewModel
+                {
+                    List = new CS.ListViewModelViewModel
+                    {
+                        TypeName = m.TypeName,
+                        EnumerableTypeName = m.EnumerableTypeName
+                    }
+                };
+            }
+
+            public override CS.ViewModelViewModel Visit(StringViewModel m)
+            {
+                return new CS.ViewModelViewModel
+                {
+                    String = new CS.StringViewModelViewModel
+                    {
+                        TypeName = m.TypeName
+                    }
+                };
+            }
+        }
+
+        private class InstructionConverter : InstructionVisitor<CS.InnerType_16>
         {
             static int i = 0;
 
@@ -57,22 +131,23 @@ namespace Flag.Compile.CSharp
 
             private string ContextVariable;
 
-            public override Templates.Templates.InnerType_16 Visit(LoopInstruction i)
+            public override CS.InnerType_16 Visit(LoopInstruction i)
             {
-                return new Templates.Templates.InnerType_16
+                return new CS.InnerType_16
                 {
-                    Loop = new Templates.Templates.LoopViewModel
+                    Loop = new CS.LoopViewModel
                     {
+                        Name = i.Name,
                         ContextVariable = ContextVariable
                     }
                 };
             }
 
-            public override Templates.Templates.InnerType_16 Visit(CallInstruction i)
+            public override CS.InnerType_16 Visit(CallInstruction i)
             {
-                return new Templates.Templates.InnerType_16
+                return new CS.InnerType_16
                 {
-                    Call = new Templates.Templates.CallViewModel
+                    Call = new CS.CallViewModel
                     {
                         Name = i.Name,
                         ChildVariable = string.Format("{0}.{1}", ContextVariable, i.Key)
@@ -80,15 +155,15 @@ namespace Flag.Compile.CSharp
                 };
             }
 
-            public override Templates.Templates.InnerType_16 Visit(CallInlineInstruction i)
+            public override CS.InnerType_16 Visit(CallInlineInstruction i)
             {
                 var childVariable = string.Format("{0}.{1}", ContextVariable, i.Key);
-                return new Templates.Templates.InnerType_16
+                return new CS.InnerType_16
                 {
-                    CallInline = new Templates.Templates.CallInlineViewModel
+                    CallInline = new CS.CallInlineViewModel
                     {
                         ChildVariable = childVariable,
-                        Template = new Templates.Templates.TemplateViewModel
+                        Template = new CS.TemplateViewModel
                         {
                             Instructions = i.Instructions.Select(new InstructionConverter(childVariable).Visit).ToList()
                         }
@@ -96,14 +171,14 @@ namespace Flag.Compile.CSharp
                 };
             }
 
-            public override Templates.Templates.InnerType_16 Visit(LoopInlineInstruction i)
+            public override CS.InnerType_16 Visit(LoopInlineInstruction i)
             {
                 var childVariable = GetVar();
-                return new Templates.Templates.InnerType_16
+                return new CS.InnerType_16
                 {
-                    LoopInline = new Templates.Templates.LoopInlineViewModel
+                    LoopInline = new CS.LoopInlineViewModel
                     {
-                        Template = new Templates.Templates.TemplateViewModel
+                        Template = new CS.TemplateViewModel
                         {
                             Instructions = i.Instructions.Select(new InstructionConverter(childVariable).Visit).ToList()
                         },
@@ -113,24 +188,24 @@ namespace Flag.Compile.CSharp
                 };
             }
 
-            public override Templates.Templates.InnerType_16 Visit(RenderInstruction i)
+            public override CS.InnerType_16 Visit(RenderInstruction i)
             {
-                return new Templates.Templates.InnerType_16
+                return new CS.InnerType_16
                 {
-                    Render = new Templates.Templates.RenderViewModel
+                    Render = new CS.RenderViewModel
                     {
                         ContextVariable = ContextVariable
                     }
                 };
             }
 
-            public override Templates.Templates.InnerType_16 Visit(OutputInstruction i)
+            public override CS.InnerType_16 Visit(OutputInstruction i)
             {
-                return new Templates.Templates.InnerType_16
+                return new CS.InnerType_16
                 {
-                    Output = new Templates.Templates.OutputViewModel
+                    Output = new CS.OutputViewModel
                     {
-                        Text = i.Text
+                        Text = i.Text.Replace("\"", "\"\"")
                     }
                 };
             }

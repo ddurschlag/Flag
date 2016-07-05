@@ -36,13 +36,21 @@ namespace Flag.VisualStudio
                 }
                 catch (Exception ex)
                 {
-                    sb.AppendLine("/*An exception occured. Please see output for details.*/");
+                    sb.AppendLine("/*An exception occured.");
+                    sb.AppendLine(ex.ToString());
+                    sb.AppendLine("*/");
                     Console.Write(ex);
                 }
                 finally
                 {
                     Console.SetOut(originalOut);
-                    Console.WriteLine(consoleOut.ToString());
+                    var writes = consoleOut.ToString();
+                    if (!string.IsNullOrWhiteSpace(writes))
+                    {
+                        sb.AppendLine("/*");
+                        sb.AppendLine(writes);
+                        sb.Append("*/");
+                    }
                 }
                 pcbOutput = ApplyText(sb.ToString(), rgbOutputFileContents);
                 return VSConstants.S_OK;
