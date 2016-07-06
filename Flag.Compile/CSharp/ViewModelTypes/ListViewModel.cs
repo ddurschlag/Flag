@@ -8,19 +8,12 @@ namespace Flag.Compile.CSharp.ViewModelTypes
 {
     public class ListViewModel : ViewModelType
     {
-        public ListViewModel(string typeName, string enumerableTypeName)
+        public ListViewModel(string typeName, string enumerableTypeName, IEnumerable<ViewModelType> innerTypes)
+        :base(typeName, innerTypes)
         {
-            _TypeName = typeName;
             EnumerableTypeName = enumerableTypeName;
         }
-
-        private string _TypeName;
         public string EnumerableTypeName { get; private set; }
-
-        public override string TypeName
-        {
-            get { return _TypeName; }
-        }
 
         public override void Accept(ViewModelTypeVisitor v)
         {

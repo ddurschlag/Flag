@@ -8,22 +8,13 @@ namespace Flag.Compile.CSharp.ViewModelTypes
 {
     public class PurePropertyViewModel : ViewModelType
     {
-        public PurePropertyViewModel(string typeName, IEnumerable<PropertyInfo> propertyTypePairs)
+        public PurePropertyViewModel(string typeName, IEnumerable<PropertyInfo> propertyTypePairs, IEnumerable<ViewModelType> innerTypes)
+        : base(typeName, innerTypes)
         {
-            _TypeName = typeName;
             PropertyTypePairs = propertyTypePairs.ToArray();
         }
 
-        private string _TypeName;
         public IEnumerable<PropertyInfo> PropertyTypePairs { get; private set; }
-
-        public override string TypeName
-        {
-            get
-            {
-                return _TypeName;
-            }
-        }
 
         public override void Accept(ViewModelTypeVisitor v)
         {

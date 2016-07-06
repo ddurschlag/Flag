@@ -8,19 +8,9 @@ namespace Flag.Compile.CSharp.ViewModelTypes
 {
     public class StringViewModel : ViewModelType
     {
-        public StringViewModel(string typeName)
+        public StringViewModel(string typeName, IEnumerable<ViewModelType> innerTypes)
+        : base(typeName, innerTypes)
         {
-            _TypeName = typeName;
-        }
-
-        private string _TypeName;
-
-        public override string TypeName
-        {
-            get
-            {
-                return _TypeName;
-            }
         }
 
         public override void Accept(ViewModelTypeVisitor v)

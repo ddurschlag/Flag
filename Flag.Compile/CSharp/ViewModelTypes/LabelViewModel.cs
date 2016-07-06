@@ -8,22 +8,13 @@ namespace Flag.Compile.CSharp.ViewModelTypes
 {
     public class LabelViewModel : ViewModelType
     {
-        public LabelViewModel(string typeName, PropertyInfo property)
+        public LabelViewModel(string typeName, PropertyInfo property, IEnumerable<ViewModelType> innerTypes)
+        :base(typeName, innerTypes)
         {
-            _TypeName = typeName;
             Property = property;
         }
 
-        private string _TypeName;
         public PropertyInfo Property { get; private set; }
-
-        public override string TypeName
-        {
-            get
-            {
-                return _TypeName;
-            }
-        }
 
         public override void Accept(ViewModelTypeVisitor v)
         {

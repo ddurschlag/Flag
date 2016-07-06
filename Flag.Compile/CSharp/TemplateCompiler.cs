@@ -23,15 +23,14 @@ namespace Flag.Compile.CSharp
         public void Compile(TextWriter writer)
         {
             var ic = new InstructionConverter("tArg");
-            var vc = new ViewModelConverter();
 
             var instructions = Load(Text);
-            var templates = new List<CS.InnerType_6>
+            var templates = new List<CS.ClassViewModel_Templates_Call_Loop>
             {
-                new CS.InnerType_6 { Item1 = Name, Item2 = (CS.InstructionsViewModel)instructions.Select(ic.Visit).ToList() }
+                new CS.ClassViewModel_Templates_Call_Loop { Item1 = Name, Item2 = (CS.InstructionsViewModel)instructions.Select(ic.Visit).ToList() }
             };
 
-            var viewModels = new ViewModelTypeFactory().Manufacture(Name + "ViewModel", instructions).Select(vc.Visit).ToList();
+            var viewModels = new ViewModelConverter().Visit(new ViewModelTypeFactory().Manufacture(Name + "ViewModel", instructions)).ToList();
 
 
             CS.Class(
@@ -55,79 +54,84 @@ namespace Flag.Compile.CSharp
             return new Parser().Parse(new Structurizer().Structurize(new Tokenizer().Tokenize(s)));
         }
 
-        private class ViewModelConverter : ViewModelTypes.ViewModelTypeVisitor<CS.ViewModelViewModel>
+        private class ViewModelConverter : ViewModelTypes.ViewModelTypeVisitor<IEnumerable<CS.ViewModelViewModel>>
         {
-            public override CS.ViewModelViewModel Visit(MultiLoopViewModel m)
+            private IEnumerable<CS.ViewModelViewModel> Recurse(ViewModelType m, CS.ViewModelViewModel result)
             {
-                return new CS.ViewModelViewModel
+                return m.InnerTypes.SelectMany(Visit).Concat(new[] { result });
+            }
+
+            public override IEnumerable<CS.ViewModelViewModel> Visit(MultiLoopViewModel m)
+            {
+                return Recurse(m, new CS.ViewModelViewModel
                 {
                     MultiLoop = new Templates.Templates.MultiLoopViewModelViewModel
                     {
-                        EnumerableTypeNames = m.EnumerableTypeNames.Cast<CS.InnerType_29>().ToList(),
+                        EnumerableTypeNames = m.EnumerableTypeNames.Cast<CS.MultiLoopViewModelViewModel_EnumerableTypeNames_Call_Loop>().ToList(),
                         TypeName = m.TypeName
                     }
-                };
+                });
             }
 
-            public override CS.ViewModelViewModel Visit(ComplexViewModel m)
+            public override IEnumerable<CS.ViewModelViewModel> Visit(ComplexViewModel m)
             {
-                return new CS.ViewModelViewModel
+                return Recurse(m, new CS.ViewModelViewModel
                 {
                     Complex = new CS.ComplexViewModelViewModel
                     {
-                        EnumerableTypeNames = m.EnumerableTypeNames.Cast<CS.InnerType_11>().ToList(),
+                        EnumerableTypeNames = m.EnumerableTypeNames.Cast<CS.ComplexViewModelViewModel_EnumerableTypeNames_Call_Loop>().ToList(),
                         TypeName = m.TypeName,
-                        PropertyTypePairs = m.PropertyTypePairs.Select(ptp => new CS.InnerType_13 { Name = ptp.Name, Type = ptp.Type }).ToList()
+                        PropertyTypePairs = m.PropertyTypePairs.Select(ptp => new CS.ComplexViewModelViewModel_PropertyTypePairs_Call_Loop { Name = ptp.Name, Type = ptp.Type }).ToList()
                     }
-                };
+                });
             }
 
-            public override CS.ViewModelViewModel Visit(PurePropertyViewModel m)
+            public override IEnumerable<CS.ViewModelViewModel> Visit(PurePropertyViewModel m)
             {
-                return new CS.ViewModelViewModel
+                return Recurse(m, new CS.ViewModelViewModel
                 {
                     PureProperty = new CS.PurePropertyViewModelViewModel
                     {
                         TypeName = m.TypeName,
-                        PropertyTypePairs = m.PropertyTypePairs.Select(ptp => new CS.InnerType_33 { Name = ptp.Name, Type = ptp.Type }).ToList()
+                        PropertyTypePairs = m.PropertyTypePairs.Select(ptp => new CS.PurePropertyViewModelViewModel_PropertyTypePairs_Call_Loop { Name = ptp.Name, Type = ptp.Type }).ToList()
                     }
-                };
+                });
             }
 
-            public override CS.ViewModelViewModel Visit(ListViewModel m)
+            public override IEnumerable<CS.ViewModelViewModel> Visit(ListViewModel m)
             {
-                return new CS.ViewModelViewModel
+                return Recurse(m, new CS.ViewModelViewModel
                 {
                     List = new CS.ListViewModelViewModel
                     {
                         TypeName = m.TypeName,
                         EnumerableTypeName = m.EnumerableTypeName
                     }
-                };
+                });
             }
 
-            public override CS.ViewModelViewModel Visit(StringViewModel m)
+            public override IEnumerable<CS.ViewModelViewModel> Visit(StringViewModel m)
             {
-                return new CS.ViewModelViewModel
+                return Recurse(m, new CS.ViewModelViewModel
                 {
-                    String = (CS.TypeName_InnerType_37)m.TypeName
-                };
+                    String = (CS.StringViewModelViewModel_TypeName_Call)m.TypeName
+                });
             }
 
-            public override CS.ViewModelViewModel Visit(LabelViewModel m)
+            public override IEnumerable<CS.ViewModelViewModel> Visit(LabelViewModel m)
             {
-                return new CS.ViewModelViewModel
+                return Recurse(m, new CS.ViewModelViewModel
                 {
                     Label = new Templates.Templates.LabelViewModelViewModel
                     {
                         TypeName = m.TypeName,
-                        Property = new Templates.Templates.Property_InnerType_18 { Name = m.Property.Name, Type = m.Property.Type }
+                        Property = new CS.LabelViewModelViewModel_Property_Call { Name = m.Property.Name, Type = m.Property.Type }
                     }
-                };
+                });
             }
         }
 
-        private class InstructionConverter : InstructionVisitor<CS.InnerType_16>
+        private class InstructionConverter : InstructionVisitor<CS.InstructionsViewModel_Loop>
         {
             static int i = 0;
 
@@ -140,9 +144,9 @@ namespace Flag.Compile.CSharp
 
             private string ContextVariable;
 
-            public override CS.InnerType_16 Visit(LoopInstruction i)
+            public override CS.InstructionsViewModel_Loop Visit(LoopInstruction i)
             {
-                return new CS.InnerType_16
+                return new CS.InstructionsViewModel_Loop
                 {
                     Loop = new CS.LoopViewModel
                     {
@@ -152,9 +156,9 @@ namespace Flag.Compile.CSharp
                 };
             }
 
-            public override CS.InnerType_16 Visit(CallInstruction i)
+            public override CS.InstructionsViewModel_Loop Visit(CallInstruction i)
             {
-                return new CS.InnerType_16
+                return new CS.InstructionsViewModel_Loop
                 {
                     Call = new CS.CallViewModel
                     {
@@ -164,10 +168,10 @@ namespace Flag.Compile.CSharp
                 };
             }
 
-            public override CS.InnerType_16 Visit(CallInlineInstruction i)
+            public override CS.InstructionsViewModel_Loop Visit(CallInlineInstruction i)
             {
                 var childVariable = string.Format("{0}.{1}", ContextVariable, i.Key);
-                return new CS.InnerType_16
+                return new CS.InstructionsViewModel_Loop
                 {
                     CallInline = new CS.CallInlineViewModel
                     {
@@ -177,10 +181,10 @@ namespace Flag.Compile.CSharp
                 };
             }
 
-            public override CS.InnerType_16 Visit(LoopInlineInstruction i)
+            public override CS.InstructionsViewModel_Loop Visit(LoopInlineInstruction i)
             {
                 var childVariable = GetVar();
-                return new CS.InnerType_16
+                return new CS.InstructionsViewModel_Loop
                 {
                     LoopInline = new CS.LoopInlineViewModel
                     {
@@ -191,19 +195,19 @@ namespace Flag.Compile.CSharp
                 };
             }
 
-            public override CS.InnerType_16 Visit(RenderInstruction i)
+            public override CS.InstructionsViewModel_Loop Visit(RenderInstruction i)
             {
-                return new CS.InnerType_16
+                return new CS.InstructionsViewModel_Loop
                 {
-                    Render = (CS.ContextVariable_InnerType_36)ContextVariable
+                    Render = (CS.RenderViewModel_ContextVariable_Call)ContextVariable
                 };
             }
 
-            public override CS.InnerType_16 Visit(OutputInstruction i)
+            public override CS.InstructionsViewModel_Loop Visit(OutputInstruction i)
             {
-                return new CS.InnerType_16
+                return new CS.InstructionsViewModel_Loop
                 {
-                    Output = (CS.Text_InnerType_30)i.Text.Replace("\"", "\"\"")
+                    Output = (CS.OutputViewModel_Text_Call)i.Text.Replace("\"", "\"\"")
                 };
             }
         }

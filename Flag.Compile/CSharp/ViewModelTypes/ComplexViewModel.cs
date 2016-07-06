@@ -8,24 +8,15 @@ namespace Flag.Compile.CSharp.ViewModelTypes
 {
     public class ComplexViewModel : ViewModelType
     {
-        public ComplexViewModel(string typeName, IEnumerable<PropertyInfo> propertyTypePairs, IEnumerable<string> enumerableTypeNames)
+        public ComplexViewModel(string typeName, IEnumerable<PropertyInfo> propertyTypePairs, IEnumerable<string> enumerableTypeNames, IEnumerable<ViewModelType> innerTypes)
+        :base(typeName, innerTypes)
         {
-            _TypeName = typeName;
             PropertyTypePairs = propertyTypePairs.ToArray();
             EnumerableTypeNames = enumerableTypeNames.ToArray();
         }
 
-        private string _TypeName;
         public IEnumerable<PropertyInfo> PropertyTypePairs { get; private set; }
         public IEnumerable<string> EnumerableTypeNames { get; private set; }
-
-        public override string TypeName
-        {
-            get
-            {
-                return _TypeName;
-            }
-        }
 
         public override void Accept(ViewModelTypeVisitor v)
         {

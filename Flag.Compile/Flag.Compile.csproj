@@ -42,7 +42,6 @@
   <ItemGroup>
     <Compile Include="CSharp\BlockContents.cs" />
     <Compile Include="CSharp\ClassContents.cs" />
-    <Compile Include="CSharp\OuterTemplateViewModel.cs" />
     <Compile Include="CSharp\TemplateCompiler.cs" />
     <Compile Include="CSharp\Templates\Call.gen.cs">
       <AutoGen>True</AutoGen>
@@ -124,7 +123,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ViewModel.flag</DependentUpon>
     </Compile>
-    <Compile Include="CSharp\TypeViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\ComplexViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\LabelViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\ListViewModel.cs" />

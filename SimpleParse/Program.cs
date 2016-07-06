@@ -49,7 +49,7 @@ namespace ~Namespace|~||~|~ {
     }
 }");
 
-            var types = new Flag.Compile.CSharp.ViewModelTypes.ViewModelTypeFactory().Manufacture("Class", ins).GroupBy(vmt => vmt.TypeName).ToDictionary(g => g.Key, g => g.ToArray());
+            //var types = new Flag.Compile.CSharp.ViewModelTypes.ViewModelTypeFactory().Manufacture("Class", ins).GroupBy(vmt => vmt.TypeName).ToDictionary(g => g.Key, g => g.ToArray());
 
 
             Console.ReadLine();
@@ -61,32 +61,6 @@ namespace ~Namespace|~||~|~ {
                 });
 
             var sb = new StringBuilder();
-
-            using (var sw = new StringWriter(sb))
-            {
-                var etns = new List<Flag.Compile.CSharp.Templates.Templates.InnerType_11> { "string", "object", "char" };
-                var ptps = new List<Flag.Compile.CSharp.Templates.Templates.InnerType_13>
-                {
-                    new Flag.Compile.CSharp.Templates.Templates.InnerType_13 { Name = "p1", Type = "string" },
-                    new Flag.Compile.CSharp.Templates.Templates.InnerType_13 { Name = "p2", Type = "object" }
-                };
-
-                var cvm = new Flag.Compile.CSharp.Templates.Templates.ComplexViewModelViewModel()
-                {
-                    TypeName = "TestType",
-                    EnumerableTypeNames = etns,
-                    PropertyTypePairs = ptps
-                };
-
-                Flag.Compile.CSharp.Templates.Templates.ViewModel(new Flag.Compile.CSharp.Templates.Templates.ViewModelViewModel()
-                {
-                    Complex = cvm
-                },
-                sw);
-            }
-
-            Console.WriteLine(sb.ToString());
-            Console.ReadLine();
 
             //sb = new StringBuilder();
             //using (var sw = new StringWriter(sb))

@@ -9,22 +9,13 @@ namespace Flag.Compile.CSharp.ViewModelTypes
 {
     public class MultiLoopViewModel : ViewModelType
     {
-        public MultiLoopViewModel(string typeName, IEnumerable<string> enumerableTypeNames)
+        public MultiLoopViewModel(string typeName, IEnumerable<string> enumerableTypeNames, IEnumerable<ViewModelType> innerTypes)
+        : base(typeName, innerTypes)
         {
-            _TypeName = typeName;
             EnumerableTypeNames = enumerableTypeNames.ToArray();
         }
 
-        private string _TypeName;
         public IEnumerable<string> EnumerableTypeNames { get; private set; }
-
-        public override string TypeName
-        {
-            get
-            {
-                return _TypeName;
-            }
-        }
 
         public override void Accept(ViewModelTypeVisitor v)
         {

@@ -2,3 +2,5 @@ Visual Studio Custom Tool support
 Compilation to JavaScript
 Optimization of Call to CallInline
 Strongly Typed ViewModel Generation
+	Properties used for multiple templates should be has-a instead of is-a -- single template conversion is a simplification.
+	Something analogous needs to be done for multi loops -- has-a?
