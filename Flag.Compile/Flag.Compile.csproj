@@ -40,8 +40,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CSharp\BlockContents.cs" />
-    <Compile Include="CSharp\ClassContents.cs" />
     <Compile Include="CSharp\TemplateCompiler.cs" />
     <Compile Include="CSharp\Templates\Call.gen.cs">
       <AutoGen>True</AutoGen>
@@ -134,9 +132,7 @@
     <Compile Include="CSharp\ViewModelTypes\ViewModelTypeFactory.cs" />
     <Compile Include="CSharp\ViewModelTypes\ViewModelTypeVisitor.cs" />
     <Compile Include="CSharp\ViewModelTypes\ViewModelViewModel.cs" />
-    <Compile Include="CSharp\InstructionViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CSharp\TemplateViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FlagParse\Flag.Parse.csproj">
