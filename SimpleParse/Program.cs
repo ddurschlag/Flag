@@ -22,6 +22,32 @@ namespace SimpleParse
         static void Main(string[] args)
         {
 
+            var dir = new TemplateDirectory();
+
+            foreach (var instStream in Directory
+                .GetFiles(@"C:\VP\playpens\Hoodlums\SimpleParse\Flag.Compile\CSharp\Templates", "*.flag")
+                .Select(fileName =>
+                        (IEnumerable<Instruction>)Test(File.ReadAllText(fileName)
+                ))
+                .SelectMany(seq =>
+                    new SequenceFinder(seq).Sequences
+                )
+            )
+            {
+                dir.Add(instStream);
+            }
+
+            foreach (var pair in dir.Counts.Where(seq => seq.Item2 > 2).OrderByDescending(seq => seq.Item2))
+            {
+                var s = string.Join<Instruction>(" ", pair.Item1);
+                if (s.Length >= 70)
+                    s = s.Substring(0, 67) + "...";
+                Console.WriteLine(pair.Item2 + ": " + s);
+                Console.WriteLine();
+            }
+
+            Console.ReadLine();
+
             //Test("abc");
             //Test("a~||~b");
             //Test(@"\\\|\~");
@@ -69,230 +95,228 @@ namespace ~Namespace|~||~|~ {
             //}
 
             //File.WriteAllText("CompiledTemplate.cs", sb.ToString());
-
-            sb = new StringBuilder();
-            using (var tw = new StringWriter(sb))
-                new Flag.Compile.CSharp.TemplateCompiler(File.ReadAllText(@"CSharp\Templates\Call.flag"), "Flag.Compile.CSharp.Templates", "Call").Compile(tw);
-
-            File.WriteAllText("Call.cs", sb.ToString());
-
-            Console.ReadLine();
         }
 
-        public class VMTest
+        public class SequenceFinder : InstructionVisitor<IEnumerable<Instruction>>
         {
-
-
-
-
-
-
-
-            #region GeneratedViewModel
-            public class TestType : IEnumerable, IEnumerable<string>, IEnumerable<object>, IEnumerable<char>
+            public SequenceFinder(IEnumerable<Instruction> root)
             {
-                public TestType(string _p1 = null, object _p2 = null, List<string> _strings = null, List<object> _objects = null
-            , List<char> _chars = null, object __ignored = null)
-                {
-                    p1 = _p1;
-                    p2 = _p2;
-
-                    strings = _strings ?? new List<string>();
-                    objects = _objects ?? new List<object>();
-                    chars = _chars ?? new List<char>();
-
-                }
-
-
-
-                public string p1 { get; set; }
-                public object p2 { get; set; }
-
-
-                public List<string> strings = new List<string>();
-                public void Add(string @string) { strings.Add(@string); }
-                IEnumerator<string> IEnumerable<string>.GetEnumerator() { return strings.GetEnumerator(); }
-
-                public List<object> objects = new List<object>();
-                public void Add(object @object) { objects.Add(@object); }
-                IEnumerator<object> IEnumerable<object>.GetEnumerator() { return objects.GetEnumerator(); }
-
-                public List<char> chars = new List<char>();
-                public void Add(char @char) { chars.Add(@char); }
-                IEnumerator<char> IEnumerable<char>.GetEnumerator() { return chars.GetEnumerator(); }
-
-
-#warning Multiple loop types
-                IEnumerator IEnumerable.GetEnumerator()
-                {
-                    var error = new Exception("Conflicting list types");
-                    error.Data.Add("Types", string.Join(", ", new[] { "", typeof(string).ToString(), typeof(object).ToString(), typeof(char).ToString() }));
-                    error.Data.Add("Class", typeof(TestType).ToString());
-                    throw error;
-                }
-
-            }
-            #endregion
-
-
-
-
-
-
-
-
-
-
-
-
-            public class SecretList<T> : IEnumerable<T>
-            {
-                public SecretList(List<T> wrapped) { Wrapped = wrapped; }
-                private List<T> Wrapped;
-                public static implicit operator SecretList<T>(List<T> l) { return new SecretList<T>(l); }
-                public static implicit operator List<T>(SecretList<T> l) { return l.Wrapped; }
-
-                public void Add(T item) { Wrapped.Add(item); }
-
-                public IEnumerator<T> GetEnumerator()
-                {
-                    return Wrapped.GetEnumerator();
-                }
-
-                IEnumerator IEnumerable.GetEnumerator()
-                {
-                    return Wrapped.GetEnumerator();
-                }
+                Find(root);
             }
 
-            public class SecretString
+            private void Find(IEnumerable<Instruction> seq)
             {
-                public SecretString(string wrapped) { Wrapped = wrapped; }
-                private string Wrapped;
-
-                public static implicit operator SecretString(string l) { return new SecretString(l); }
-                public static implicit operator string(SecretString l) { return l.Wrapped; }
+                _Sequences.Add(seq);
+                foreach (var s in seq.Select(Visit).Where(subSeq => subSeq != null))
+                    Find(s);
             }
 
-            public static Root Example = new Root
+            public override IEnumerable<Instruction> Visit(OutputInstruction i)
             {
-                Simple = { Text = "Foo" },
-                Weird = { Text = "Bar", RenderAndProperty = 3 },
-                SuperWeird = new NonSimpleList("A")
-                {
-                    "A",
-                    new Simple {Text="BAR" }
-                },
-                Multi = new MultiList {
-                "A",
-                new Simple{Text = "FOO" },
-                "B"
-                }
-            };
-
-            public class Root
-            {
-                public Simple Simple { get; set; }
-                public MapWithUnknowns Weird { get; set; }
-                public NonSimpleList SuperWeird { get; set; }
-                public MultiList Multi { get; set; }
+                return null;
             }
 
-            public class Simple
+            public override IEnumerable<Instruction> Visit(RenderInstruction i)
             {
-                public SecretString Text { get; set; }
+                return null;
             }
 
-            public class MapWithUnknowns
+            public override IEnumerable<Instruction> Visit(LoopInstruction i)
             {
-                public SecretString Text
-                {
-                    get; set;
-                }
-
-#warning Could not generate ViewModel for "RenderAndProperty"; falling back to dynamic
-                public dynamic RenderAndProperty { get; set; }
+                return null;
             }
 
-            public class MultiList : IEnumerable<Simple>, IEnumerable<SecretString>
+            public override IEnumerable<Instruction> Visit(LoopInlineInstruction i)
             {
-                public SecretList<Simple> Simples = new List<Simple>();
-                public SecretList<SecretString> Strings = new List<SecretString>();
+                return i.Instructions;
+            }
 
-                public void Add(Simple @simple)
+            public override IEnumerable<Instruction> Visit(CallInstruction i)
+            {
+                return null;
+            }
+
+            public override IEnumerable<Instruction> Visit(CallInlineInstruction i)
+            {
+                return i.Instructions;
+            }
+
+            private List<IEnumerable<Instruction>> _Sequences = new List<IEnumerable<Instruction>>();
+
+            public IEnumerable<IEnumerable<Instruction>> Sequences { get { return _Sequences; } }
+        }
+
+        public class TemplateDirectory
+        {
+            public void Add(IEnumerable<Instruction> sequence)
+            {
+                Sequences.Add(sequence.ToArray());
+            }
+
+            private class TemplateComparer : IEqualityComparer<IEnumerable<Instruction>>
+            {
+                private class InstructionComparer : IEqualityComparer<Instruction>
                 {
-                    Simples.Add(@simple);
+                    private class InstructionComparerFactory : InstructionVisitor<IEqualityComparer<Instruction>>
+                    {
+                        private abstract class InstructionComparer<T> : IEqualityComparer<Instruction>
+                        where T : Instruction
+                        {
+                            protected abstract bool Equals(T a, T b);
+                            protected abstract int GetHashCode(T obj);
+
+                            public bool Equals(Instruction x, Instruction y)
+                            {
+                                return x is T && y is T && Equals((T)x, (T)y);
+                            }
+
+                            public int GetHashCode(Instruction obj)
+                            {
+                                if (obj is T)
+                                    return GetHashCode((T)obj) ^ typeof(T).GetHashCode();
+                                throw new Exception("Bad type in GetHashCode");
+                            }
+                        }
+                        private class LoopComparer : InstructionComparer<LoopInstruction>
+                        {
+                            protected override bool Equals(LoopInstruction a, LoopInstruction b)
+                            {
+                                return a.Name == b.Name;
+                            }
+
+                            protected override int GetHashCode(LoopInstruction obj)
+                            {
+                                return obj.Name.GetHashCode();
+                            }
+                        }
+
+                        private class CallComparer : InstructionComparer<CallInstruction>
+                        {
+                            protected override bool Equals(CallInstruction a, CallInstruction b)
+                            {
+                                return a.Key == b.Key && a.Name == b.Name;
+                            }
+
+                            protected override int GetHashCode(CallInstruction obj)
+                            {
+                                return obj.Key.GetHashCode() ^ obj.Name.GetHashCode();
+                            }
+                        }
+
+                        private class CallInlineComparer : InstructionComparer<CallInlineInstruction>
+                        {
+                            protected override bool Equals(CallInlineInstruction a, CallInlineInstruction b)
+                            {
+                                return a.Key == b.Key && new TemplateComparer().Equals(a.Instructions, b.Instructions);
+                            }
+
+                            protected override int GetHashCode(CallInlineInstruction obj)
+                            {
+                                return obj.Key.GetHashCode() ^ new TemplateComparer().GetHashCode(obj.Instructions);
+                            }
+                        }
+
+                        private class LoopInlineComparer : InstructionComparer<LoopInlineInstruction>
+                        {
+                            protected override bool Equals(LoopInlineInstruction a, LoopInlineInstruction b)
+                            {
+                                return new TemplateComparer().Equals(a.Instructions, b.Instructions);
+                            }
+
+                            protected override int GetHashCode(LoopInlineInstruction obj)
+                            {
+                                return new TemplateComparer().GetHashCode(obj.Instructions);
+                            }
+                        }
+
+                        private class RenderComparer : InstructionComparer<RenderInstruction>
+                        {
+                            protected override bool Equals(RenderInstruction a, RenderInstruction b)
+                            {
+                                return true;
+                            }
+
+                            protected override int GetHashCode(RenderInstruction obj)
+                            {
+                                return 0;
+                            }
+                        }
+
+                        private class OutputComparer : InstructionComparer<OutputInstruction>
+                        {
+                            protected override bool Equals(OutputInstruction a, OutputInstruction b)
+                            {
+                                return a.Text == b.Text;
+                            }
+
+                            protected override int GetHashCode(OutputInstruction obj)
+                            {
+                                return obj.Text.GetHashCode();
+                            }
+                        }
+
+                        public override IEqualityComparer<Instruction> Visit(LoopInstruction i)
+                        {
+                            return new LoopComparer();
+                        }
+
+                        public override IEqualityComparer<Instruction> Visit(CallInstruction i)
+                        {
+                            return new CallComparer();
+                        }
+
+                        public override IEqualityComparer<Instruction> Visit(CallInlineInstruction i)
+                        {
+                            return new CallInlineComparer();
+                        }
+
+                        public override IEqualityComparer<Instruction> Visit(LoopInlineInstruction i)
+                        {
+                            return new LoopInlineComparer();
+                        }
+
+                        public override IEqualityComparer<Instruction> Visit(RenderInstruction i)
+                        {
+                            return new RenderComparer();
+                        }
+
+                        public override IEqualityComparer<Instruction> Visit(OutputInstruction i)
+                        {
+                            return new OutputComparer();
+                        }
+                    }
+
+                    public bool Equals(Instruction x, Instruction y)
+                    {
+                        return new InstructionComparerFactory().Visit(x).Equals(x,y);
+                    }
+
+                    public int GetHashCode(Instruction obj)
+                    {
+                        return new InstructionComparerFactory().Visit(obj).GetHashCode(obj);
+                    }
                 }
 
-                public void Add(string @string)
+                public bool Equals(IEnumerable<Instruction> x, IEnumerable<Instruction> y)
                 {
-                    Strings.Add(@string);
+                    var c = new InstructionComparer();
+                    return x.Zip(y, c.Equals).All(b => b);
                 }
 
-                public IEnumerator<Simple> GetEnumerator()
+                public int GetHashCode(IEnumerable<Instruction> obj)
                 {
-                    return Simples.GetEnumerator();
-                }
-
-#warning Multiple loop types
-                IEnumerator IEnumerable.GetEnumerator()
-                {
-                    var error = new Exception("Conflicting list types");
-                    error.Data.Add("Types", string.Join(", ", new[] { typeof(Simple).ToString(), typeof(string).ToString() }));
-                    error.Data.Add("Class", typeof(NonSimpleList).ToString());
-                    throw error;
-                }
-
-                IEnumerator<SecretString> IEnumerable<SecretString>.GetEnumerator()
-                {
-                    foreach (var x in Strings)
-                        yield return x;
+                    var c = new InstructionComparer();
+                    return obj.Select(i => c.GetHashCode(i)).Aggregate((a, b) => a ^ b);
                 }
             }
 
-            public class NonSimpleList : IEnumerable<Simple>, IEnumerable<string>
+            private List<Instruction[]> Sequences = new List<Instruction[]>();
+            public IEnumerable<Tuple<Instruction[], int>> Counts
             {
-                public NonSimpleList(string text = null, SecretList<Simple> simples = null, SecretList<string> strings = null)
-                {
-                    Text = text;
-                    Simples = simples ?? new List<Simple>();
-                    Strings = strings ?? new List<string>();
-                }
-
-                public string Text { get; set; }
-                public SecretList<Simple> Simples = new List<Simple>();
-                public SecretList<string> Strings = new List<string>();
-
-                public void Add(Simple @simple)
-                {
-                    Simples.Add(@simple);
-                }
-
-                public void Add(string @string)
-                {
-                    Strings.Add(@string);
-                }
-
-                public IEnumerator<Simple> GetEnumerator()
-                {
-                    return Simples.GetEnumerator();
-                }
-
-#warning Multiple loop types
-                IEnumerator IEnumerable.GetEnumerator()
-                {
-                    var error = new Exception("Conflicting list types");
-                    error.Data.Add("Types", string.Join(", ", new[] { typeof(Simple).ToString(), typeof(string).ToString() }));
-                    error.Data.Add("Class", typeof(NonSimpleList).ToString());
-                    throw error;
-                }
-
-                IEnumerator<string> IEnumerable<string>.GetEnumerator()
-                {
-                    return Strings.GetEnumerator();
-                }
+                get { return Sequences.GroupBy(s => s, new TemplateComparer()).Select(g => Tuple.Create(g.Key.ToArray(), g.Count())); }
             }
         }
+
 
         //public class DirectoryCompiler
         //{
