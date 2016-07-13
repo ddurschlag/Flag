@@ -9,50 +9,47 @@ namespace Flag.Parse
     using Instructions;
     using Structures;
 
-    public class Parser
+    public class Parser : StructureVisitor<Instruction>
     {
         public IEnumerable<Instruction> Parse(IEnumerable<Structure> input)
         {
-            return input.Select(new InstructionFactory().Visit);
+            return input.Select(Visit);
         }
 
-        private class InstructionFactory : StructureVisitor<Instruction>
+        public override Instruction Visit(CommandStructure s)
         {
-            public override Instruction Visit(CommandStructure s)
+            bool keyp = !string.IsNullOrEmpty(s.Key);
+            bool inlinep = s.Inline.Any();
+            bool namep = !string.IsNullOrEmpty(s.Name);
+            if (!keyp && !inlinep && !namep)
+                return new RenderInstruction();
+            if (!inlinep && !namep)
             {
-                bool keyp = !string.IsNullOrEmpty(s.Key);
-                bool inlinep = s.Inline.Any();
-                bool namep = !string.IsNullOrEmpty(s.Name);
-                if (!keyp && !inlinep && !namep)
-                    return new RenderInstruction();
-                if (!inlinep && !namep)
-                {
-                    var error = new Exception("Missing template");
-                    error.Data.Add("Structure", s);
-                }
-                if (inlinep && namep)
-                {
-                    var error = new Exception("Ambiguous template");
-                    error.Data.Add("Structure", s);
-                }
-                if (inlinep)
-                    if (keyp)
-                        return new CallInlineInstruction(s.Key, s.Inline.Select(Visit));
-                    else
-                        return new LoopInlineInstruction(s.Inline.Select(Visit));
-                else {
-                    if (keyp)
-                        return new CallInstruction(s.Name, s.Key);
-                    else
-                        return new LoopInstruction(s.Name);
-                }
-
+                var error = new Exception("Missing template");
+                error.Data.Add("Structure", s);
+            }
+            if (inlinep && namep)
+            {
+                var error = new Exception("Ambiguous template");
+                error.Data.Add("Structure", s);
+            }
+            if (inlinep)
+                if (keyp)
+                    return new CallInlineInstruction(s.Key, s.Inline.Select(Visit));
+                else
+                    return new LoopInlineInstruction(s.Inline.Select(Visit));
+            else {
+                if (keyp)
+                    return new CallInstruction(s.Name, s.Key);
+                else
+                    return new LoopInstruction(s.Name);
             }
 
-            public override Instruction Visit(OutputStructure s)
-            {
-                return new OutputInstruction(s.Text);
-            }
+        }
+
+        public override Instruction Visit(OutputStructure s)
+        {
+            return new OutputInstruction(s.Text);
         }
     }
 }

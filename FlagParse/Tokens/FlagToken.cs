@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Flag.Parse.Tokens
 {
+    [Serializable]
     public class FlagToken : Token
     {
         internal override void Accept(TokenVisitor v)

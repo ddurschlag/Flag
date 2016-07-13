@@ -10,16 +10,31 @@ namespace Flag.Parse
     using Structures;
     public class Structurizer
     {
-        public IEnumerable<Structure> Structurize(IEnumerable<Token> input)
-        {
-            VisitorState s = new VisitorState();
-            s.Peek.Current = new OuterOutput(s);
+        private VisitorState State;
 
-            foreach (var t in input)
-                foreach (var output in s.Peek.Current.Visit(t))
-                    yield return output;
+        public Structurizer()
+        {
+            State = new VisitorState();
+            State.Peek.Current = new OuterOutput(State);
         }
 
+        public IEnumerable<Structure> Structurize(IEnumerable<Token> input)
+        {
+            return input.SelectMany(Structurize);   //Unsafe to inline Structurize, as it will ignore changes
+                                                    //to current state!
+        }
+
+        public IEnumerable<Structure> Structurize(Token input)
+        {
+            //This code looks weird, because it is. Why can't we just return the result of visit?
+            //The problem is a complex interaction between lazy yield-return methods and
+            //the state pattern which, inherently, updates state. The result is that the initial
+            //state (OuterOutput in this case) will be used to process ALL input, and quickly fail.
+            foreach (var s in State.Peek.Current.Visit(input))
+                yield return s;
+        }
+
+        [Serializable]
         private class VisitorState
         {
             public VisitorState()
@@ -33,62 +48,16 @@ namespace Flag.Parse
             public VisitorFrame Peek { get { return Frames.Peek(); } }
         }
 
+        [Serializable]
         private class VisitorFrame
         {
-            public StructureFactory Current;
+            public StructureFactory<VisitorState, Structure> Current;
             public string Key;
             public List<Structure> Inline = new List<Structure>();
             public string Name;
         }
 
-        private abstract class StructureFactory : TokenVisitor<IEnumerable<Structure>>
-        {
-            public StructureFactory(VisitorState s)
-            {
-                State = s;
-            }
-
-            protected VisitorState State { get; private set; }
-
-            public override IEnumerable<Structure> Visit(PoleToken t)
-            {
-                Fail(t);
-                yield break;
-            }
-
-            public override IEnumerable<Structure> Visit(EndToken t)
-            {
-                Fail(t);
-                yield break;
-            }
-
-            public override IEnumerable<Structure> Visit(FlagToken t)
-            {
-                Fail(t);
-                yield break;
-            }
-
-            public override IEnumerable<Structure> Visit(StringToken t)
-            {
-                Fail(t);
-                yield break;
-            }
-
-            protected void Fail(Token t)
-            {
-                Fail("Unexpected token type", t);
-            }
-
-            protected void Fail(string message, Token t)
-            {
-                var error = new Exception(message);
-                error.Data.Add("Token", t);
-                error.Data.Add("Context", State);
-                throw error;
-            }
-        }
-
-        private class OuterOutput : StructureFactory
+        private class OuterOutput : StructureFactory<VisitorState, Structure>
         {
             public OuterOutput(VisitorState s) : base(s) { }
 
@@ -109,7 +78,7 @@ namespace Flag.Parse
             }
         }
 
-        private class OuterKey : StructureFactory
+        private class OuterKey : StructureFactory<VisitorState, Structure>
         {
             public OuterKey(VisitorState s) : base(s) { }
             public override IEnumerable<Structure> Visit(PoleToken t)
@@ -125,7 +94,7 @@ namespace Flag.Parse
             }
         }
 
-        private class OuterInline : StructureFactory
+        private class OuterInline : StructureFactory<VisitorState, Structure>
         {
             public OuterInline(VisitorState s) : base(s)
             {
@@ -151,7 +120,7 @@ namespace Flag.Parse
             }
         }
 
-        private class OuterName : StructureFactory
+        private class OuterName : StructureFactory<VisitorState, Structure>
         {
             public OuterName(VisitorState s) : base(s)
             {
@@ -171,7 +140,7 @@ namespace Flag.Parse
             }
         }
 
-        private class InnerKey : StructureFactory
+        private class InnerKey : StructureFactory<VisitorState, Structure>
         {
             public InnerKey(VisitorState s) : base(s)
             {
@@ -190,7 +159,7 @@ namespace Flag.Parse
             }
         }
 
-        private class InnerInline : StructureFactory
+        private class InnerInline : StructureFactory<VisitorState, Structure>
         {
             public InnerInline(VisitorState s) : base(s)
             {
@@ -216,7 +185,7 @@ namespace Flag.Parse
             }
         }
 
-        private class InnerName : StructureFactory
+        private class InnerName : StructureFactory<VisitorState, Structure>
         {
             public InnerName(VisitorState s) : base(s)
             {

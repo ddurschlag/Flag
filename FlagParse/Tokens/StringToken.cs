@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Flag.Parse.Tokens
 {
+    [Serializable]
     public class StringToken : Token
     {
         public StringToken(string text) { Text = text; }

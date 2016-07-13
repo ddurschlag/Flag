@@ -40,9 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuntingStructurizer.cs" />
     <Compile Include="Instructions\CallInlineInstruction.cs" />
     <Compile Include="Instructions\CallInstruction.cs" />
     <Compile Include="Instructions\Instruction.cs" />
+    <Compile Include="Instructions\InstructionSequenceComparer.cs" />
     <Compile Include="Instructions\InstructionVisitor.cs" />
     <Compile Include="Instructions\LoopInlineInstruction.cs" />
     <Compile Include="Instructions\LoopInstruction.cs" />
@@ -53,6 +55,7 @@
     <Compile Include="Structures\CommandStructure.cs" />
     <Compile Include="Structures\OutputStructure.cs" />
     <Compile Include="Structures\Structure.cs" />
+    <Compile Include="Structures\StructureFactory.cs" />
     <Compile Include="Structures\StructureVisitor.cs" />
     <Compile Include="Structurizer.cs" />
     <Compile Include="Tokens\EndToken.cs" />

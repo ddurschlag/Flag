@@ -22,6 +22,57 @@ namespace SimpleParse
         static void Main(string[] args)
         {
 
+            var buntingTestText = @"FIRST TEST~
+~abc~
+
+~SECOND TEST~
+
+~a~||~b~
+
+~THIRD TEST~
+
+~\\\|\~~
+
+~FOURTH TEST~
+
+~a~||t~b~
+
+~FIFTH TEST~~a~|t|~b~
+
+~SIXTH TEST~~a~k||t~b~
+
+~SEVENTH TEST~
+
+~a~k|t|~EOF";
+
+            var buntingTest = BuntingTest(buntingTestText);
+
+            Action<string, string> ba = (name, text) =>
+             {
+                 Console.WriteLine(string.Format("Testing bunting on {0}: {1}", name, text));
+
+                 var bunting = buntingTest[name];
+                 var flag = Test(text);
+
+                 if (new InstructionSequenceComparer().Equals(bunting, flag))
+                 {
+                     Console.WriteLine("Success");
+                 }
+                 else {
+                     Console.WriteLine("Fail");
+                 }
+             };
+
+            ba("FIRST TEST", @"abc");
+            ba("SECOND TEST", @"a~||~b");
+            ba("THIRD TEST", @"\\\|\~");
+            ba("FOURTH TEST", @"a~||t~b");
+            ba("FIFTH TEST", @"a~|t|~b");
+            ba("SIXTH TEST", @"a~k||t~b");
+            ba("SEVENTH TEST", @"a~k|t|~EOF");
+
+            Console.ReadLine();
+
             var dir = new TemplateDirectory();
 
             foreach (var instStream in Directory
@@ -48,14 +99,14 @@ namespace SimpleParse
 
             Console.ReadLine();
 
-            //Test("abc");
-            //Test("a~||~b");
-            //Test(@"\\\|\~");
-            //Test(@"a~||t~b");
-            //Test(@"a~|t|~b");
-            //Test(@"a~k||t~b");
-            //Test(@"a~k|t|~b");
-
+            Test("abc");
+            Test("a~||~b");
+            Test(@"\\\|\~");
+            Test(@"a~||t~b");
+            Test(@"a~|t|~b");
+            Test(@"a~k||t~b");
+            Test(@"a~k|t|~b");
+            Console.ReadLine();
             var ins = Test(@"using System;
 using System.IO;
 using System.Collections;
@@ -153,167 +204,10 @@ namespace ~Namespace|~||~|~ {
                 Sequences.Add(sequence.ToArray());
             }
 
-            private class TemplateComparer : IEqualityComparer<IEnumerable<Instruction>>
-            {
-                private class InstructionComparer : IEqualityComparer<Instruction>
-                {
-                    private class InstructionComparerFactory : InstructionVisitor<IEqualityComparer<Instruction>>
-                    {
-                        private abstract class InstructionComparer<T> : IEqualityComparer<Instruction>
-                        where T : Instruction
-                        {
-                            protected abstract bool Equals(T a, T b);
-                            protected abstract int GetHashCode(T obj);
-
-                            public bool Equals(Instruction x, Instruction y)
-                            {
-                                return x is T && y is T && Equals((T)x, (T)y);
-                            }
-
-                            public int GetHashCode(Instruction obj)
-                            {
-                                if (obj is T)
-                                    return GetHashCode((T)obj) ^ typeof(T).GetHashCode();
-                                throw new Exception("Bad type in GetHashCode");
-                            }
-                        }
-                        private class LoopComparer : InstructionComparer<LoopInstruction>
-                        {
-                            protected override bool Equals(LoopInstruction a, LoopInstruction b)
-                            {
-                                return a.Name == b.Name;
-                            }
-
-                            protected override int GetHashCode(LoopInstruction obj)
-                            {
-                                return obj.Name.GetHashCode();
-                            }
-                        }
-
-                        private class CallComparer : InstructionComparer<CallInstruction>
-                        {
-                            protected override bool Equals(CallInstruction a, CallInstruction b)
-                            {
-                                return a.Key == b.Key && a.Name == b.Name;
-                            }
-
-                            protected override int GetHashCode(CallInstruction obj)
-                            {
-                                return obj.Key.GetHashCode() ^ obj.Name.GetHashCode();
-                            }
-                        }
-
-                        private class CallInlineComparer : InstructionComparer<CallInlineInstruction>
-                        {
-                            protected override bool Equals(CallInlineInstruction a, CallInlineInstruction b)
-                            {
-                                return a.Key == b.Key && new TemplateComparer().Equals(a.Instructions, b.Instructions);
-                            }
-
-                            protected override int GetHashCode(CallInlineInstruction obj)
-                            {
-                                return obj.Key.GetHashCode() ^ new TemplateComparer().GetHashCode(obj.Instructions);
-                            }
-                        }
-
-                        private class LoopInlineComparer : InstructionComparer<LoopInlineInstruction>
-                        {
-                            protected override bool Equals(LoopInlineInstruction a, LoopInlineInstruction b)
-                            {
-                                return new TemplateComparer().Equals(a.Instructions, b.Instructions);
-                            }
-
-                            protected override int GetHashCode(LoopInlineInstruction obj)
-                            {
-                                return new TemplateComparer().GetHashCode(obj.Instructions);
-                            }
-                        }
-
-                        private class RenderComparer : InstructionComparer<RenderInstruction>
-                        {
-                            protected override bool Equals(RenderInstruction a, RenderInstruction b)
-                            {
-                                return true;
-                            }
-
-                            protected override int GetHashCode(RenderInstruction obj)
-                            {
-                                return 0;
-                            }
-                        }
-
-                        private class OutputComparer : InstructionComparer<OutputInstruction>
-                        {
-                            protected override bool Equals(OutputInstruction a, OutputInstruction b)
-                            {
-                                return a.Text == b.Text;
-                            }
-
-                            protected override int GetHashCode(OutputInstruction obj)
-                            {
-                                return obj.Text.GetHashCode();
-                            }
-                        }
-
-                        public override IEqualityComparer<Instruction> Visit(LoopInstruction i)
-                        {
-                            return new LoopComparer();
-                        }
-
-                        public override IEqualityComparer<Instruction> Visit(CallInstruction i)
-                        {
-                            return new CallComparer();
-                        }
-
-                        public override IEqualityComparer<Instruction> Visit(CallInlineInstruction i)
-                        {
-                            return new CallInlineComparer();
-                        }
-
-                        public override IEqualityComparer<Instruction> Visit(LoopInlineInstruction i)
-                        {
-                            return new LoopInlineComparer();
-                        }
-
-                        public override IEqualityComparer<Instruction> Visit(RenderInstruction i)
-                        {
-                            return new RenderComparer();
-                        }
-
-                        public override IEqualityComparer<Instruction> Visit(OutputInstruction i)
-                        {
-                            return new OutputComparer();
-                        }
-                    }
-
-                    public bool Equals(Instruction x, Instruction y)
-                    {
-                        return new InstructionComparerFactory().Visit(x).Equals(x,y);
-                    }
-
-                    public int GetHashCode(Instruction obj)
-                    {
-                        return new InstructionComparerFactory().Visit(obj).GetHashCode(obj);
-                    }
-                }
-
-                public bool Equals(IEnumerable<Instruction> x, IEnumerable<Instruction> y)
-                {
-                    var c = new InstructionComparer();
-                    return x.Zip(y, c.Equals).All(b => b);
-                }
-
-                public int GetHashCode(IEnumerable<Instruction> obj)
-                {
-                    var c = new InstructionComparer();
-                    return obj.Select(i => c.GetHashCode(i)).Aggregate((a, b) => a ^ b);
-                }
-            }
-
             private List<Instruction[]> Sequences = new List<Instruction[]>();
             public IEnumerable<Tuple<Instruction[], int>> Counts
             {
-                get { return Sequences.GroupBy(s => s, new TemplateComparer()).Select(g => Tuple.Create(g.Key.ToArray(), g.Count())); }
+                get { return Sequences.GroupBy(s => s, new InstructionSequenceComparer()).Select(g => Tuple.Create(g.Key.ToArray(), g.Count())); }
             }
         }
 
@@ -386,15 +280,37 @@ namespace ~Namespace|~||~|~ {
 
         private static Instruction[] Test(string s)
         {
-            var tokens = new Tokenizer().Tokenize(s);
+            var tokens = new Tokenizer().Tokenize(s).ToArray();
             var structures = new Structurizer().Structurize(tokens).ToArray();
             var instructions = new Parser().Parse(structures).ToArray();
             Console.WriteLine("input: " + s);
-            Console.WriteLine("tokens: " + string.Join(" ", tokens));
+            Console.WriteLine("tokens: " + string.Join<Token>(" ", tokens));
             Console.WriteLine("structures: " + string.Join<Structure>(" ", structures));
             Console.WriteLine("instructions: " + string.Join<Instruction>(" ", instructions));
             Console.WriteLine();
             return instructions;
+        }
+
+        private static Dictionary<string, Instruction[]> BuntingTest(string s)
+        {
+            Dictionary<string, Instruction[]> result = new Dictionary<string, Instruction[]>();
+            var tokens = new Tokenizer().Tokenize(s).ToArray();
+            var structures = new BuntingStructurizer().Structurize(tokens).ToArray();
+
+            Console.WriteLine("input: " + s);
+            Console.WriteLine("tokens: " + string.Join<Token>(" ", tokens));
+
+            foreach (var template in structures)
+            {
+                Console.WriteLine("\t\t" + template.Item1);
+                var instructions = new Parser().Parse(template.Item2).ToArray();
+                Console.WriteLine("structures: " + string.Join<Structure>(" ", template.Item2));
+                Console.WriteLine("instructions: " + string.Join<Instruction>(" ", instructions));
+                result.Add(template.Item1, instructions);
+                Console.WriteLine();
+            }
+
+            return result;
         }
     }
 }
