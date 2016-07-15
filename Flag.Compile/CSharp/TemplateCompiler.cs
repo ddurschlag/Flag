@@ -14,29 +14,37 @@ namespace Flag.Compile.CSharp
     public class TemplateCompiler
     {
         public TemplateCompiler(string text, string @namespace, string name)
+        : this(text, @namespace, name, "Templates")
+        { }
+
+        public TemplateCompiler(string text, string @namespace, string name, string className)
+        : this(Load(text), @namespace, name, className)
         {
-            Text = text;
+        }
+
+        internal TemplateCompiler(IEnumerable<Instruction> instructions, string @namespace, string name, string className)
+        {
+            Instructions = instructions;
             Namespace = @namespace;
             Name = name;
+            ClassName = className;
         }
 
         public void Compile(TextWriter writer)
         {
             var ic = new InstructionConverter("tArg");
-
-            var instructions = Load(Text);
             var templates = new List<CS.ClassViewModel_Templates_Call_Loop>
             {
-                new CS.ClassViewModel_Templates_Call_Loop { Item1 = Name, Item2 = (CS.InstructionsViewModel)instructions.Select(ic.Visit).ToList() }
+                new CS.ClassViewModel_Templates_Call_Loop { Item1 = Name, Item2 = (CS.InstructionsViewModel)Instructions.Select(ic.Visit).ToList() }
             };
 
-            var viewModels = new ViewModelConverter().Visit(new ViewModelTypeFactory().Manufacture(Name + "ViewModel", instructions)).ToList();
+            var viewModels = new ViewModelConverter().Visit(new ViewModelTypeFactory().Manufacture(Name + "ViewModel", Instructions)).ToList();
 
 
             CS.Class(
             new CS.ClassViewModel()
             {
-                Name = "Templates",
+                Name = ClassName,
                 Namespace = Namespace,
                 Templates = templates,
                 ViewModels = viewModels
@@ -45,9 +53,10 @@ namespace Flag.Compile.CSharp
             );
         }
 
-        private string Text;
+        private IEnumerable<Instruction> Instructions;
         private string Name;
         private string Namespace;
+        private string ClassName;
 
         private static IEnumerable<Instruction> Load(string s)
         {
@@ -127,6 +136,14 @@ namespace Flag.Compile.CSharp
                         TypeName = m.TypeName,
                         Property = new CS.LabelViewModelViewModel_Property_Call { Name = m.Property.Name, Type = m.Property.Type }
                     }
+                });
+            }
+
+            public override IEnumerable<CS.ViewModelViewModel> Visit(EmptyViewModel m)
+            {
+                return Recurse(m, new CS.ViewModelViewModel
+                {
+                    Empty = (CS.EmptyViewModelViewModel_TypeName_Call)m.TypeName
                 });
             }
         }

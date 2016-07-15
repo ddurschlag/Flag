@@ -43,6 +43,9 @@ namespace Flag.Compile.CSharp.ViewModelTypes
             if (analysis.LoopCount > 0 && analysis.PropertyP)
                 return new ComplexViewModel(name, analysis.Properties.Select(CreatePropertyInfo), analysis.LoopTypes, analysis.NestedTypes);
 
+            if (analysis.LoopCount == 0 && !analysis.PropertyP && !analysis.RenderP)
+                return new EmptyViewModel(name, analysis.NestedTypes);
+
             throw new Exception("Unknown template pattern.");
         }
 

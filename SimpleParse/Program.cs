@@ -21,6 +21,35 @@ namespace SimpleParse
     {
         static void Main(string[] args)
         {
+            var sb = new StringBuilder();
+            using (var sw = new StringWriter(sb))
+            {
+                new Flag.Compile.CSharp.BuntingCompiler(@"FIRST_TEST~
+~abc~
+
+~SECOND_TEST~
+
+~a~||~b~
+
+~THIRD_TEST~
+
+~\\\|\~~
+
+~FOURTH_TEST~
+
+~a~||t~b~
+
+~FIFTH_TEST~~a~|t|~b~
+
+~SIXTH_TEST~~a~k||t~b~
+
+~SEVENTH_TEST~
+
+~a~k|t|~EOF", "Test.Bunting", "BuntingTests").Compile(sw);
+            }
+            Console.WriteLine(sb.ToString());
+            Console.ReadLine();
+
 
             var buntingTestText = @"FIRST TEST~
 ~abc~
@@ -137,7 +166,7 @@ namespace ~Namespace|~||~|~ {
                     {"Second List", new [] {"Item C", "Item D" } }
                 });
 
-            var sb = new StringBuilder();
+            sb = new StringBuilder();
 
             //sb = new StringBuilder();
             //using (var sw = new StringWriter(sb))

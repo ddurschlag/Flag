@@ -40,6 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CSharp\BuntingCompiler.cs" />
+    <Compile Include="CSharp\Class.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Class.bunting</DependentUpon>
+    </Compile>
     <Compile Include="CSharp\TemplateCompiler.cs" />
     <Compile Include="CSharp\Templates\Call.gen.cs">
       <AutoGen>True</AutoGen>
@@ -60,6 +66,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ComplexViewModel.flag</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\Templates\EmptyViewModel.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EmptyViewModel.flag</DependentUpon>
     </Compile>
     <Compile Include="CSharp\Templates\Instructions.gen.cs">
       <AutoGen>True</AutoGen>
@@ -122,6 +133,7 @@
       <DependentUpon>ViewModel.flag</DependentUpon>
     </Compile>
     <Compile Include="CSharp\ViewModelTypes\ComplexViewModel.cs" />
+    <Compile Include="CSharp\ViewModelTypes\EmptyViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\LabelViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\ListViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\MultiLoopViewModel.cs" />
@@ -131,7 +143,6 @@
     <Compile Include="CSharp\ViewModelTypes\ViewModelType.cs" />
     <Compile Include="CSharp\ViewModelTypes\ViewModelTypeFactory.cs" />
     <Compile Include="CSharp\ViewModelTypes\ViewModelTypeVisitor.cs" />
-    <Compile Include="CSharp\ViewModelTypes\ViewModelViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +153,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="CSharp\Class.bunting">
+      <Generator>BuntingTemplate</Generator>
+      <LastGenOutput>Class.gen.cs</LastGenOutput>
+    </None>
     <None Include="CSharp\Templates\Call.flag">
       <Generator>FlagTemplate</Generator>
       <LastGenOutput>Call.gen.cs</LastGenOutput>
@@ -157,6 +172,10 @@
     <None Include="CSharp\Templates\ComplexViewModel.flag">
       <Generator>FlagTemplate</Generator>
       <LastGenOutput>ComplexViewModel.gen.cs</LastGenOutput>
+    </None>
+    <None Include="CSharp\Templates\EmptyViewModel.flag">
+      <Generator>FlagTemplate</Generator>
+      <LastGenOutput>EmptyViewModel.gen.cs</LastGenOutput>
     </None>
     <None Include="CSharp\Templates\Instructions.flag">
       <Generator>FlagTemplate</Generator>
