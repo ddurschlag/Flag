@@ -1,4 +1,0 @@
-﻿if ( ~ContextVariable|~||~|~ != null )
-foreach ( var ~ChildVariable|~||~|~ in ~ContextVariable|~||~|~ ) {
-~Template||Template~
-}

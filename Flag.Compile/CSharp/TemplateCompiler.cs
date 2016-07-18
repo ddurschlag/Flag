@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace Flag.Compile.CSharp
 {
-    using Templates;
     using ViewModelTypes;
     using Parse;
     using Parse.Instructions;
