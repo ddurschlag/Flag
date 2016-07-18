@@ -1,9 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
+﻿namespace ~Namespace|~||~|~ {
+    using System;
+    using System.IO;
+    using System.Collections;
+    using System.Collections.Generic;
 
-namespace ~Namespace|~||~|~ {
     public partial class ~Name|~||~|~ {
         ~Templates|~|
 

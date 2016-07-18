@@ -15,7 +15,7 @@ namespace Flag.Parse
         public BuntingStructurizer()
         {
             State = new VisitorState();
-            State.Current = new Header(State);
+            State.Peek.Current = new Header(State);
         }
 
         public IEnumerable<Tuple<string, IEnumerable<Structure>>> Structurize(IEnumerable<Token> input)
@@ -26,14 +26,33 @@ namespace Flag.Parse
 
         public IEnumerable<Tuple<string, IEnumerable<Structure>>> Structurize(Token input)
         {
-            return State.Current.Visit(input);
+            return State.Peek.Current.Visit(input);
         }
 
         [Serializable]
         private class VisitorState
         {
-            public StructureFactory<VisitorState, Tuple<string, IEnumerable<Structure>>> Current;
+            public VisitorState()
+            {
+                Frames = new Stack<VisitorFrame>();
+                Frames.Push(new VisitorFrame());
+            }
+
             public string TemplateName;
+            public List<Structure> TemplateContent = new List<Structure>();
+
+            public Stack<VisitorFrame> Frames;
+
+            public VisitorFrame Peek { get { return Frames.Peek(); } }
+        }
+
+        [Serializable]
+        private class VisitorFrame
+        {
+            public StructureFactory<VisitorState, Tuple<string, IEnumerable<Structure>>> Current;
+            public string Key;
+            public List<Structure> Inline = new List<Structure>();
+            public string Name;
         }
 
         private class Header : StructureFactory<VisitorState, Tuple<string, IEnumerable<Structure>>>
@@ -45,173 +64,199 @@ namespace Flag.Parse
             public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(StringToken t)
             {
                 State.TemplateName = t.Text;
-                State.Current = new StartA(State);
+                yield break;
+            }
+
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(FlagToken t)
+            {
+                if ( State.TemplateName == null )
+                {
+                    throw new Exception("Template without name");
+                }
+                State.Peek.Current = new TemplateStart(State);
                 yield break;
             }
         }
 
-        private class StartA : StructureFactory<VisitorState, Tuple<string, IEnumerable<Structure>>>
+        private class TemplateStart : StructureFactory<VisitorState, Tuple<string, IEnumerable<Structure>>>
         {
-            public StartA(VisitorState s) : base(s)
+            public TemplateStart(VisitorState s) : base(s)
             {
             }
 
             public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(FlagToken t)
             {
-                State.Current = new StartB(State);
-                yield break;
-            }
-        }
-
-        private class StartB : StructureFactory<VisitorState, Tuple<string, IEnumerable<Structure>>>
-        {
-            public StartB(VisitorState s) : base(s)
-            {
-            }
-
-            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(FlagToken t)
-            {
-                State.Current = new Template(State);
+                State.Peek.Current = new OuterOutput(State);
                 yield break;
             }
 
             public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(StringToken t)
             {
-                if (string.IsNullOrWhiteSpace(t.Text))
-                    yield break;
-                else
-                    throw new Exception("Only whitespace is allowed between template name delimiting tildes");
+                if (!string.IsNullOrWhiteSpace(t.Text))
+                    throw new Exception("Only whitespace is allowed amidst template dividers");
+                yield break;
             }
         }
 
-        private class Template : StructureFactory<VisitorState, Tuple<string, IEnumerable<Structure>>>
+        private class OuterOutput : StructureFactory<VisitorState, Tuple<string, IEnumerable<Structure>>>
         {
-            private TemplateTokenVisitor V = new TemplateTokenVisitor();
-            private Structurizer S = new Structurizer();
-            private FlagToken PrevFlag = null;
-            private StringToken WhiteSpace = null;
-            private IEnumerable<Structure> Result = Enumerable.Empty<Structure>();
-
-            public Template(VisitorState s) : base(s)
-            {
-            }
+            public OuterOutput(VisitorState s) : base(s) { }
 
             public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(EndToken t)
             {
-                if (PrevFlag != null)
-                {
-                    Process(PrevFlag);
-                    PrevFlag = null;
-                    if (WhiteSpace != null)
-                    {
-                        Process(WhiteSpace);
-                        WhiteSpace = null;
-                    }
-                }
-                Process(t);
-                State.Current = new Header(State);
-                yield return Tuple.Create(State.TemplateName, Result);
+                yield return Tuple.Create(State.TemplateName, (IEnumerable<Structure>)State.TemplateContent);
             }
 
-            private void Process(Token t)
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(FlagToken t)
             {
-                Result = Result.Concat(S.Structurize(t));
+                State.Peek.Current = new OuterKey(State);
+                yield break;
+            }
+
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(StringToken t)
+            {
+                State.TemplateContent.Add(new OutputStructure(t.Text));
+                yield break;
+            }
+        }
+
+        private class OuterKey : StructureFactory<VisitorState, Tuple<string, IEnumerable<Structure>>>
+        {
+            public OuterKey(VisitorState s) : base(s) { }
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(PoleToken t)
+            {
+                State.Peek.Current = new OuterInline(State);
+                yield break;
+            }
+
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(StringToken t)
+            {
+                State.Peek.Key = t.Text;
+                yield break;
+            }
+
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(FlagToken t)
+            {
+                if (!string.IsNullOrWhiteSpace(State.Peek.Key))
+                    throw new Exception("Only whitespace is allowed amidst template dividers");
+                yield return Tuple.Create(State.TemplateName, (IEnumerable<Structure>)State.TemplateContent);
+                State.TemplateContent = new List<Structure>();
+                State.TemplateName = null;
+                State.Frames.Pop();
+                State.Frames.Push(new VisitorFrame() { Current = new Header(State) });
+            }
+        }
+
+        private class OuterInline : StructureFactory<VisitorState, Tuple<string, IEnumerable<Structure>>>
+        {
+            public OuterInline(VisitorState s) : base(s)
+            {
             }
 
             public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(PoleToken t)
             {
-                if (PrevFlag != null)
-                {
-                    Process(PrevFlag);
-                    PrevFlag = null;
-                    if (WhiteSpace != null)
-                    {
-                        Process(WhiteSpace);
-                        WhiteSpace = null;
-                    }
-                }
-                Process(t);
+                State.Peek.Current = new OuterName(State);
                 yield break;
             }
 
             public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(StringToken t)
             {
-                if (PrevFlag != null)
-                {
-                    if (!string.IsNullOrWhiteSpace(t.Text))
-                    {
-                        Process(PrevFlag);
-                        if ( WhiteSpace != null )
-                        {
-                            Process(WhiteSpace);
-                            WhiteSpace = null;
-                        }
-                        PrevFlag = null;
-                    } else {
-                        WhiteSpace = t;
-                        yield break;
-                    }
-                }
-                Process(t);
+                State.Peek.Inline.Add(new OutputStructure(t.Text));
                 yield break;
             }
 
             public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(FlagToken t)
             {
-                if (PrevFlag != null)
-                {
-                    Process(new EndToken());
-                    State.Current = new Header(State);
-                    yield return Tuple.Create(State.TemplateName, Result);
-                }
-                else {
-                    PrevFlag = t;
-                    yield break;
-                }
+                State.Frames.Push(new VisitorFrame());
+                State.Peek.Current = new InnerKey(State);
+                yield break;
             }
         }
 
-
-        private class TemplateTokenVisitor : TokenVisitor<IEnumerable<Token>>
+        private class OuterName : StructureFactory<VisitorState, Tuple<string, IEnumerable<Structure>>>
         {
-            private FlagToken PrevFlag = null;
-
-            public override IEnumerable<Token> Visit(PoleToken t)
+            public OuterName(VisitorState s) : base(s)
             {
-                if (PrevFlag != null)
-                {
-                    yield return PrevFlag;
-                    PrevFlag = null;
-                }
-                yield return t;
             }
 
-            public override IEnumerable<Token> Visit(EndToken t)
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(FlagToken t)
             {
-                if (PrevFlag != null)
-                {
-                    yield return PrevFlag;
-                    PrevFlag = null;
-                }
-                yield return t;
+                State.TemplateContent.Add( new CommandStructure(State.Peek.Key, State.Peek.Inline, State.Peek.Name));
+                State.Frames.Pop();
+                State.Frames.Push(new VisitorFrame() { Current = new OuterOutput(State) });
+                yield break;
             }
 
-            public override IEnumerable<Token> Visit(FlagToken t)
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(StringToken t)
             {
-                if (PrevFlag != null)
-                    yield return new EndToken();
-                else
-                    PrevFlag = t;
+                State.Peek.Name = t.Text;
+                yield break;
+            }
+        }
+
+        private class InnerKey : StructureFactory<VisitorState, Tuple<string, IEnumerable<Structure>>>
+        {
+            public InnerKey(VisitorState s) : base(s)
+            {
             }
 
-            public override IEnumerable<Token> Visit(StringToken t)
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(StringToken t)
             {
-                if (PrevFlag != null)
-                {
-                    yield return PrevFlag;
-                    PrevFlag = null;
-                }
-                yield return t;
+                State.Peek.Key = t.Text;
+                yield break;
+            }
+
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(PoleToken t)
+            {
+                State.Peek.Current = new InnerInline(State);
+                yield break;
+            }
+        }
+
+        private class InnerInline : StructureFactory<VisitorState, Tuple<string, IEnumerable<Structure>>>
+        {
+            public InnerInline(VisitorState s) : base(s)
+            {
+            }
+
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(PoleToken t)
+            {
+                State.Peek.Current = new InnerName(State);
+                yield break;
+            }
+
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(StringToken t)
+            {
+                State.Peek.Inline.Add(new OutputStructure(t.Text));
+                yield break;
+            }
+
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(FlagToken t)
+            {
+                State.Frames.Push(new VisitorFrame());
+                State.Peek.Current = new InnerKey(State);
+                yield break;
+            }
+        }
+
+        private class InnerName : StructureFactory<VisitorState, Tuple<string, IEnumerable<Structure>>>
+        {
+            public InnerName(VisitorState s) : base(s)
+            {
+            }
+
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(FlagToken t)
+            {
+                var innerCommand = new CommandStructure(State.Peek.Key, State.Peek.Inline, State.Peek.Name);
+                State.Frames.Pop();
+                State.Peek.Inline.Add(innerCommand);
+                yield break;
+            }
+
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(StringToken t)
+            {
+                State.Peek.Name = t.Text;
+                yield break;
             }
         }
     }

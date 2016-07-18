@@ -24,28 +24,25 @@ namespace SimpleParse
             var sb = new StringBuilder();
             using (var sw = new StringWriter(sb))
             {
-                new Flag.Compile.CSharp.BuntingCompiler(@"FIRST_TEST~
-~abc~
+                new Flag.Compile.CSharp.BuntingCompiler(@"EmptyViewModel~
+~public class ~TypeName|~||~|~{}~
 
-~SECOND_TEST~
+~Instructions~
+~~|~Loop||Loop~~LoopInline||LoopInline~~Call||Call~~CallInline||CallInline~~Output||Output~~Render||Render~|~~
 
-~a~||~b~
+~LabelViewModel~
+~public class ~TypeName|~||~|~
+{
+    private ~TypeName|~||~|~(~Property|~Type|~||~|~ _~Name|~||~|~)
+    {
+        ~Name|~||~|~ = _~Name|~||~|~;
+    }
 
-~THIRD_TEST~
+    public ~Type|~||~|~ ~Name|~||~|~ { get; set; }|~
 
-~\\\|\~~
-
-~FOURTH_TEST~
-
-~a~||t~b~
-
-~FIFTH_TEST~~a~|t|~b~
-
-~SIXTH_TEST~~a~k||t~b~
-
-~SEVENTH_TEST~
-
-~a~k|t|~EOF", "Test.Bunting", "BuntingTests").Compile(sw);
+    public static implicit operator ~TypeName|~||~|~(~Property|~Type|~||~|~|~ _~Property|~Name|~||~|~|~) { return new ~TypeName|~||~|~(_~Property|~Name|~||~|~|~); }
+    public static implicit operator ~Property|~Type|~||~|~|~(~TypeName|~||~|~ me) { return me.~Property|~Name|~||~|~|~; }
+}", "Test.Bunting", "BuntingTests").Compile(sw);
             }
             Console.WriteLine(sb.ToString());
             Console.ReadLine();
@@ -66,9 +63,13 @@ namespace SimpleParse
 
 ~a~||t~b~
 
-~FIFTH TEST~~a~|t|~b~
+~FIFTH TEST~
 
-~SIXTH TEST~~a~k||t~b~
+~a~|t|~b~
+
+~SIXTH TEST~
+
+~a~k||t~b~
 
 ~SEVENTH TEST~
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Flag.Compile.CSharp.ViewModelTypes
 {
-    using Flag.Parse.Instructions;
+    using Parse.Instructions;
     public class ViewModelTypeFactory
     {
         public ViewModelType Manufacture(string name, IEnumerable<Instruction> instructions)

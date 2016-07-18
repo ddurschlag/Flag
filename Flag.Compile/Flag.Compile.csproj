@@ -41,10 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CSharp\BuntingCompiler.cs" />
-    <Compile Include="CSharp\Class.gen.cs">
+    <Compile Include="CSharp\Flag.gen.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Class.bunting</DependentUpon>
+      <DependentUpon>Flag.bunting</DependentUpon>
     </Compile>
     <Compile Include="CSharp\TemplateCompiler.cs" />
     <Compile Include="CSharp\Templates\Call.gen.cs">
@@ -153,9 +153,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <None Include="CSharp\Class.bunting">
+    <None Include="CSharp\Flag.bunting">
       <Generator>BuntingTemplate</Generator>
-      <LastGenOutput>Class.gen.cs</LastGenOutput>
+      <LastGenOutput>Flag.gen.cs</LastGenOutput>
     </None>
     <None Include="CSharp\Templates\Call.flag">
       <Generator>FlagTemplate</Generator>

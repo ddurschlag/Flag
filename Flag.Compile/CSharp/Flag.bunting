@@ -1,0 +1,158 @@
+﻿Call~
+~if ( ~ChildVariable|~||~|~ != null ) { ~Name|~||~|~(~ChildVariable|~||~|~, writer); }~
+
+~CallInline~
+~if ( ~ChildVariable|~||~|~ != null ) {
+~Template||Template~
+}~
+
+~Class~
+~namespace ~Namespace|~||~|~ {
+    using System;
+    using System.IO;
+    using System.Collections;
+    using System.Collections.Generic;
+
+    public partial class ~Name|~||~|~ {
+        ~Templates|~|
+
+        public static void ~Item1|~||~|~(~Item1|~||~|~ViewModel tArg, TextWriter writer) {
+            ~Item2||Template~
+        }   
+
+        |~|~
+
+        ~ViewModels|~||ViewModel~|~
+    }
+}~
+
+~ComplexViewModel~
+~public class ~TypeName|~||~|~ : IEnumerable ~EnumerableTypeNames|~|, IEnumerable<~||~>|~|~
+{
+    public ~TypeName|~||~|~(~PropertyTypePairs|~| ~Type|~||~|~ _~Name|~||~|~ = null, |~|~ ~EnumerableTypeNames|~|List<~||~> _~||~s = null,  |~|~ object __ignored = null)
+    {
+        ~PropertyTypePairs|~|~Name|~||~|~ = _~Name|~||~|~;
+        |~|~
+        ~EnumerableTypeNames|~|~||~s = _~||~s ?? new List<~||~>();
+        |~|~
+    }
+
+
+    ~PropertyTypePairs|~|
+          public ~Type|~||~|~ ~Name|~||~|~ { get; set; }|~|~
+
+~EnumerableTypeNames|~|
+    public List<~||~> ~||~s = new List<~||~>();
+    public void Add(~||~ @~||~) { ~||~s.Add(@~||~); }
+    IEnumerator<~||~> IEnumerable<~||~>.GetEnumerator() { return ~||~s.GetEnumerator(); }
+    |~|~
+
+#warning Multiple loop types
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        var error = new Exception("Conflicting list types");
+        error.Data.Add("Types", string.Join(", ", new[] { "" ~EnumerableTypeNames|~|, typeof(~||~).ToString()|~|~ }));
+        error.Data.Add("Class", typeof(~TypeName|~||~|~).ToString());
+        throw error;
+    }
+
+}~
+
+~EmptyViewModel~
+~public class ~TypeName|~||~|~{}~
+
+~Instructions~
+~~|~Loop||Loop~~LoopInline||LoopInline~~Call||Call~~CallInline||CallInline~~Output||Output~~Render||Render~|~~
+
+~LabelViewModel~
+~public class ~TypeName|~||~|~
+{
+    private ~TypeName|~||~|~(~Property|~Type|~||~|~ _~Name|~||~|~)
+    {
+        ~Name|~||~|~ = _~Name|~||~|~;
+    }
+
+    public ~Type|~||~|~ ~Name|~||~|~ { get; set; }|~
+
+    public static implicit operator ~TypeName|~||~|~(~Property|~Type|~||~|~|~ _~Property|~Name|~||~|~|~) { return new ~TypeName|~||~|~(_~Property|~Name|~||~|~|~); }
+    public static implicit operator ~Property|~Type|~||~|~|~(~TypeName|~||~|~ me) { return me.~Property|~Name|~||~|~|~; }
+}~
+
+~ListViewModel~
+~public class ~TypeName|~||~|~ : IEnumerable<~EnumerableTypeName|~||~|~>
+{
+    private ~TypeName|~||~|~(List<~EnumerableTypeName|~||~|~> wrapped) { Wrapped = wrapped; }
+    private List<~EnumerableTypeName|~||~|~> Wrapped;
+    public static implicit operator ~TypeName|~||~|~(List<~EnumerableTypeName|~||~|~> l) { return new ~TypeName|~||~|~(l); }
+    public static implicit operator List<~EnumerableTypeName|~||~|~>(~TypeName|~||~|~ l) { return l.Wrapped; }
+
+    public void Add(~EnumerableTypeName|~||~|~ item) { Wrapped.Add(item); }
+
+    public IEnumerator<~EnumerableTypeName|~||~|~> GetEnumerator()
+    {
+        return Wrapped.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return Wrapped.GetEnumerator();
+    }
+}~
+
+~Loop~
+~if ( ~ContextVariable|~||~|~ != null ) foreach ( var childElement in ~ContextVariable|~||~|~ ) { ~Name|~||~|~(childElement, writer); }~
+
+~LoopInline~
+~if ( ~ContextVariable|~||~|~ != null )
+foreach ( var ~ChildVariable|~||~|~ in ~ContextVariable|~||~|~ ) {
+~Template||Template~
+}~
+
+~MultiLoopViewModel~
+~public class ~TypeName|~||~|~ : IEnumerable ~EnumerableTypeNames|~|, IEnumerable<~||~>|~|~
+{
+~EnumerableTypeNames|~|
+    public List<~||~> ~||~s = new List<~||~>();
+    public void Add(~||~ @~||~) { ~||~s.Add(@~||~); }
+    IEnumerator<~||~> IEnumerable<~||~>.GetEnumerator() { return ~||~s.GetEnumerator(); }
+    |~|~
+
+#warning Multiple loop types
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        var error = new Exception("Conflicting list types");
+        error.Data.Add("Types", string.Join(", ", new[] { "" ~EnumerableTypeNames|~|, typeof(~||~).ToString()|~|~ }));
+        error.Data.Add("Class", typeof(~TypeName|~||~|~).ToString());
+        throw error;
+    }
+
+}~
+
+~Output~
+~writer.Write(@"~Text|~||~|~");~
+
+~PurePropertyViewModel~
+~public class ~TypeName|~||~|~
+{
+    ~PropertyTypePairs|~|
+          public ~Type|~||~|~ ~Name|~||~|~ { get; set; }|~|~
+}~
+
+~Render~
+~writer.Write(~ContextVariable|~||~|~);~
+
+~StringViewModel~
+~public class ~TypeName|~||~|~
+{
+    private ~TypeName|~||~|~(string wrapped) { Wrapped = wrapped; }
+    private string Wrapped;
+
+    public static implicit operator ~TypeName|~||~|~(string l) { return new ~TypeName|~||~|~(l); }
+    public static implicit operator string(~TypeName|~||~|~ l) { return l.Wrapped; }
+}~
+
+~Template~
+~~Instructions||Instructions~~
+
+~ViewModel~
+~~Empty||EmptyViewModel~~String||StringViewModel~~List||ListViewModel~~Label||LabelViewModel~~PureProperty||PurePropertyViewModel~~MultiLoop||MultiLoopViewModel~~Complex||ComplexViewModel~
