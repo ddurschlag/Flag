@@ -27,6 +27,17 @@ namespace Flag.Tests
             );
         }
 
+        [Test]
+        public void Output()
+        {
+            AssertCompilation(
+                "abc",
+                new Token[] { new StringToken("abc"), new EndToken() },
+                new Structure[] { new OutputStructure("abc") },
+                new Instruction[] { new OutputInstruction("abc") }
+            );
+        }
+
 
         private static void AssertCompilation(
             string s,
