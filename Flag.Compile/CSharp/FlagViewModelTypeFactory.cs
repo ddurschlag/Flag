@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Flag.Compile.CSharp.ViewModelTypes
+namespace Flag.Compile.CSharp
 {
+    using ViewModelTypes;
     using Parse.Instructions;
-    public class ViewModelTypeFactory
+    using System.Collections;
+
+    public class FlagViewModelTypeFactory
     {
         public ViewModelType Manufacture(string name, IEnumerable<Instruction> instructions)
         {
@@ -56,18 +59,18 @@ namespace Flag.Compile.CSharp.ViewModelTypes
 
         private class ViewModelAnalysis : InstructionVisitor
         {
-            public ViewModelAnalysis(ViewModelTypeFactory parent, string name)
+            public ViewModelAnalysis(FlagViewModelTypeFactory parent, string name)
             {
                 Parent = parent;
                 Name = name;
             }
 
             private string Name;
-            private ViewModelTypeFactory Parent;
+            private FlagViewModelTypeFactory Parent;
             private List<string> _NamedLoopTypes = new List<string>();
-            private ViewModelType InlineLoopType = null;
+            private string InlineLoopType = null;
             private Dictionary<string, string> MapTypes = new Dictionary<string, string>();
-            private List<ViewModelType> InnerTypes = new List<ViewModelType>();
+            private SubTypeProcessor Processor = new SubTypeProcessor();
 
             public int LoopCount { get { return _NamedLoopTypes.Count + (InlineLoopType != null ? 1 : 0); } }
             public IEnumerable<string> LoopTypes
@@ -76,11 +79,11 @@ namespace Flag.Compile.CSharp.ViewModelTypes
                 {
                     IEnumerable<string> result = _NamedLoopTypes;
                     if (InlineLoopType != null)
-                        result = result.Concat(new[] { InlineLoopType.TypeName });
+                        result = result.Concat(new[] { InlineLoopType });
                     return result;
                 }
             }
-            public IEnumerable<ViewModelType> NestedTypes { get { return InnerTypes; } }
+            public IEnumerable<ViewModelType> NestedTypes { get { return Processor; } }
 
             public bool RenderP { get; private set; }
 
@@ -121,11 +124,70 @@ namespace Flag.Compile.CSharp.ViewModelTypes
                 }
             }
 
-            private ViewModelType ManufactureInnerType(string name, IEnumerable<Instruction> instructions)
+            private string ManufactureInnerType(string name, IEnumerable<Instruction> instructions)
             {
-                var innerType = Parent.Manufacture(name, instructions);
-                InnerTypes.Add(innerType);
-                return innerType; //This is a hack. Should really return the requested type in a more "privileged" position
+                return Processor.Visit(Parent.Manufacture(name, instructions));
+            }
+
+            private class SubTypeProcessor : ViewModelTypeVisitor<string>, IEnumerable<ViewModelType>
+            {
+                public SubTypeProcessor()
+                {
+                    InnerTypeList = new List<ViewModelType>();
+                }
+
+                private List<ViewModelType> InnerTypeList;
+
+                public override string Visit(StringViewModel m)
+                {
+                    return "string";
+                }
+
+                public override string Visit(ListViewModel m)
+                {
+                    return string.Format("List<{0}>", m.EnumerableTypeName);
+                }
+
+                public override string Visit(MultiLoopViewModel m)
+                {
+                    return Process(m);
+                }
+
+                public override string Visit(PurePropertyViewModel m)
+                {
+                    return Process(m);
+                }
+
+                public override string Visit(ComplexViewModel m)
+                {
+                    return Process(m);
+                }
+
+                public override string Visit(LabelViewModel m)
+                {
+                    return Process(m);
+                }
+
+                public override string Visit(EmptyViewModel m)
+                {
+                    return Process(m);
+                }
+
+                private string Process(ViewModelType m)
+                {
+                    InnerTypeList.Add(m);
+                    return m.TypeName;
+                }
+
+                public IEnumerator<ViewModelType> GetEnumerator()
+                {
+                    return InnerTypeList.GetEnumerator();
+                }
+
+                IEnumerator IEnumerable.GetEnumerator()
+                {
+                    return GetEnumerator();
+                }
             }
 
             public override void Visit(CallInstruction i)
@@ -148,7 +210,7 @@ namespace Flag.Compile.CSharp.ViewModelTypes
                 }
                 else
                 {
-                    MapTypes.Add(i.Key, ManufactureInnerType(Name + "_" + i.Key + "_Call", i.Instructions).TypeName);
+                    MapTypes.Add(i.Key, ManufactureInnerType(Name + "_" + i.Key + "_Call", i.Instructions));
                 }
             }
         }

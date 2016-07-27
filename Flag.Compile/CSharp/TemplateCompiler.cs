@@ -36,7 +36,7 @@ namespace Flag.Compile.CSharp
                 new Flag.ClassViewModel_Templates_Call_Loop { Item1 = Name, Item2 = (Flag.InstructionsViewModel)Instructions.Select(ic.Visit).ToList() }
             };
 
-            var viewModels = new ViewModelConverter().Visit(new ViewModelTypeFactory().Manufacture(Name + "ViewModel", Instructions)).ToList();
+            var viewModels = new ViewModelConverter().Visit(new FlagViewModelTypeFactory().Manufacture(Name + "ViewModel", Instructions)).ToList();
 
 
             Flag.Class(
@@ -61,7 +61,7 @@ namespace Flag.Compile.CSharp
             return new Parser().Parse(new Structurizer().Structurize(new Tokenizer().Tokenize(s)));
         }
 
-        private class ViewModelConverter : ViewModelTypes.ViewModelTypeVisitor<IEnumerable<Flag.ViewModelViewModel>>
+        private class ViewModelConverter : ViewModelTypeVisitor<IEnumerable<Flag.ViewModelViewModel>>
         {
             private IEnumerable<Flag.ViewModelViewModel> Recurse(ViewModelType m, Flag.ViewModelViewModel result)
             {

@@ -4,6 +4,14 @@ Windows Registry Editor Version 5.00
 [HKEY_CURRENT_USER\SOFTWARE\Microsoft\VisualStudio\14.0_Config\CLSID\{C2F3F1BE-3DB1-4342-9B43-2E8B385DE5F3}]
 "InprocServer32"="C:\\Windows\\System32\\mscoree.dll"
 "ThreadingModel"="Both"
+"Class"="Flag.VisualStudio.BuntingCustomTool"
+; Assembly with version
+"Assembly"="Flag.VisualStudio, Version=1.0.0.0, Culture=neutral"
+; Path to dll
+"CodeBase"="file:///C:\\Program Files\\Flag\\Flag.VisualStudio.dll"
+[HKEY_CURRENT_USER\SOFTWARE\Microsoft\VisualStudio\14.0_Config_4716\CLSID\{C2F3F1BE-3DB1-4342-9B43-2E8B385DE5F3}]
+"InprocServer32"="C:\\Windows\\System32\\mscoree.dll"
+"ThreadingModel"="Both"
 ; Class-specific name
 "Class"="Flag.VisualStudio.BuntingCustomTool"
 ; Assembly with version
@@ -13,6 +21,12 @@ Windows Registry Editor Version 5.00
  
 ; Class-specific tool name
 [HKEY_CURRENT_USER\Software\Microsoft\VisualStudio\14.0_Config\Generators\{FAE04EC1-301F-11D3-BF4B-00C04F79EFBC}\BuntingTemplate]
+; Class-specific GUID again
+"CLSID"="{C2F3F1BE-3DB1-4342-9B43-2E8B385DE5F3}"
+"GeneratesDesignTimeSource"=dword:00000001
+; Description of tool
+@="Compiles Buntings of Flag templates into C#"
+[HKEY_CURRENT_USER\Software\Microsoft\VisualStudio\14.0_Config_4716\Generators\{FAE04EC1-301F-11D3-BF4B-00C04F79EFBC}\BuntingTemplate]
 ; Class-specific GUID again
 "CLSID"="{C2F3F1BE-3DB1-4342-9B43-2E8B385DE5F3}"
 "GeneratesDesignTimeSource"=dword:00000001

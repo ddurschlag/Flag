@@ -56,7 +56,7 @@
     <Compile Include="CSharp\ViewModelTypes\PurePropertyViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\StringViewModel.cs" />
     <Compile Include="CSharp\ViewModelTypes\ViewModelType.cs" />
-    <Compile Include="CSharp\ViewModelTypes\ViewModelTypeFactory.cs" />
+    <Compile Include="CSharp\FlagViewModelTypeFactory.cs" />
     <Compile Include="CSharp\ViewModelTypes\ViewModelTypeVisitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
