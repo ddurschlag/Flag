@@ -84,7 +84,7 @@ namespace SimpleParse
                  var bunting = buntingTest[name];
                  var flag = Test(text);
 
-                 if (new InstructionSequenceComparer().Equals(bunting, flag))
+                 if (SequenceComparer.Of(new InstructionComparer()).Equals(bunting, flag))
                  {
                      Console.WriteLine("Success");
                  }
@@ -237,7 +237,7 @@ namespace ~Namespace|~||~|~ {
             private List<Instruction[]> Sequences = new List<Instruction[]>();
             public IEnumerable<Tuple<Instruction[], int>> Counts
             {
-                get { return Sequences.GroupBy(s => s, new InstructionSequenceComparer()).Select(g => Tuple.Create(g.Key.ToArray(), g.Count())); }
+                get { return Sequences.GroupBy(s => s, SequenceComparer.Of(new InstructionComparer())).Select(g => Tuple.Create(g.Key.ToArray(), g.Count())); }
             }
         }
 

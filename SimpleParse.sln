@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleParse", "SimpleParse\SimpleParse.csproj", "{6F0C8622-6BA5-4111-935F-578E2A7229EB}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flag.Compile", "Flag.Compile\Flag.Compile.csproj", "{9601A30D-F1EA-41C2-AAF5-114A4CDBDAAD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flag.VisualStudio", "Flag.VisualStudio\Flag.VisualStudio.csproj", "{75DE4C88-5AE2-447F-A63F-2F5F6DCCD881}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flag.Tests", "Flag.Tests\Flag.Tests.csproj", "{762C7BDC-50A7-4339-9CFB-0A6FEC87AFCD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{75DE4C88-5AE2-447F-A63F-2F5F6DCCD881}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75DE4C88-5AE2-447F-A63F-2F5F6DCCD881}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75DE4C88-5AE2-447F-A63F-2F5F6DCCD881}.Release|Any CPU.Build.0 = Release|Any CPU
+		{762C7BDC-50A7-4339-9CFB-0A6FEC87AFCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{762C7BDC-50A7-4339-9CFB-0A6FEC87AFCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{762C7BDC-50A7-4339-9CFB-0A6FEC87AFCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{762C7BDC-50A7-4339-9CFB-0A6FEC87AFCD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
