@@ -140,11 +140,13 @@ namespace Flag.Compile.CSharp
 
                 public override string Visit(StringViewModel m)
                 {
+                    InnerTypeList.AddRange(m.InnerTypes);
                     return "string";
                 }
 
                 public override string Visit(ListViewModel m)
                 {
+                    InnerTypeList.AddRange(m.InnerTypes);
                     return string.Format("List<{0}>", m.EnumerableTypeName);
                 }
 

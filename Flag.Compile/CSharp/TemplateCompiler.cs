@@ -74,7 +74,7 @@ namespace Flag.Compile.CSharp
                 {
                     MultiLoop = new Flag.MultiLoopViewModelViewModel
                     {
-                        EnumerableTypeNames = m.EnumerableTypeNames.Cast<Flag.MultiLoopViewModelViewModel_EnumerableTypeNames_Call_Loop>().ToList(),
+                        EnumerableTypeNames = m.EnumerableTypeNames.ToList(),
                         TypeName = m.TypeName
                     }
                 });
@@ -86,7 +86,7 @@ namespace Flag.Compile.CSharp
                 {
                     Complex = new Flag.ComplexViewModelViewModel
                     {
-                        EnumerableTypeNames = m.EnumerableTypeNames.Cast<Flag.ComplexViewModelViewModel_EnumerableTypeNames_Call_Loop>().ToList(),
+                        EnumerableTypeNames = m.EnumerableTypeNames.ToList(),
                         TypeName = m.TypeName,
                         PropertyTypePairs = m.PropertyTypePairs.Select(ptp => new Flag.ComplexViewModelViewModel_PropertyTypePairs_Call_Loop { Name = ptp.Name, Type = ptp.Type }).ToList()
                     }
@@ -121,7 +121,7 @@ namespace Flag.Compile.CSharp
             {
                 return Recurse(m, new Flag.ViewModelViewModel
                 {
-                    String = (Flag.StringViewModelViewModel_TypeName_Call)m.TypeName
+                    String = m.TypeName
                 });
             }
 
@@ -141,7 +141,7 @@ namespace Flag.Compile.CSharp
             {
                 return Recurse(m, new Flag.ViewModelViewModel
                 {
-                    Empty = (Flag.EmptyViewModelViewModel_TypeName_Call)m.TypeName
+                    Empty = m.TypeName
                 });
             }
         }
@@ -214,7 +214,7 @@ namespace Flag.Compile.CSharp
             {
                 return new Flag.InstructionsViewModel_Loop
                 {
-                    Render = (Flag.RenderViewModel_ContextVariable_Call)ContextVariable
+                    Render = ContextVariable
                 };
             }
 
@@ -222,7 +222,7 @@ namespace Flag.Compile.CSharp
             {
                 return new Flag.InstructionsViewModel_Loop
                 {
-                    Output = (Flag.OutputViewModel_Text_Call)i.Text.Replace("\"", "\"\"")
+                    Output = i.Text.Replace("\"", "\"\"")
                 };
             }
         }
