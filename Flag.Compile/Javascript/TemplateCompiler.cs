@@ -58,7 +58,7 @@ namespace Flag.Compile.Javascript
 
             private static string GetVar() { return "anon_" + (i++); }
             private static string GetLoopVar() { return "loopIndex_" + (i++); }
-            private static string GetPropertyExpression(string var, string prop) { return string.Format("var[\"prop\"];", var, prop); }
+            private static string GetPropertyExpression(string var, string prop) { return string.Format("{0}[\"{1}\"]", var, prop); }
 
             public InstructionConverter(string contextVariable)
             {

@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-//using SimpleParse.Instructions;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Linq.Expressions;
-using System.IO;
+using Flag.Interpret;
+using Flag.Parse;
+using Flag.Parse.Instructions;
 using Flag.Parse.Structures;
 using Flag.Parse.Tokens;
-using Flag.Parse.Instructions;
-using Flag.Parse;
-using Flag.Interpret;
-using System.Collections;
 
 namespace SimpleParse
 {
@@ -24,25 +18,17 @@ namespace SimpleParse
             var sb = new StringBuilder();
             using (var sw = new StringWriter(sb))
             {
-                new Flag.Compile.CSharp.BuntingCompiler(new Flag.Compile.CSharp.TemplateCompiler("Test.Bunting", "BuntingTests")).Compile( @"EmptyViewModel~
-~public class ~TypeName|~||~|~{}~
+                new Flag.Compile.BuntingCompiler(new Flag.Compile.Javascript.TemplateCompiler("Test.Bunting", "BuntingTests")).Compile( @"Label~
+~<span class='label'>~||~: </span>~
 
-~Instructions~
-~~|~Loop||Loop~~LoopInline||LoopInline~~Call||Call~~CallInline||CallInline~~Output||Output~~Render||Render~|~~
+~Content~
+~~||~~
 
-~LabelViewModel~
-~public class ~TypeName|~||~|~
-{
-    private ~TypeName|~||~|~(~Property|~Type|~||~|~ _~Name|~||~|~)
-    {
-        ~Name|~||~|~ = _~Name|~||~|~;
-    }
+~ListItem~
+~<li>~Label||Label~~Content||Content~</li>~
 
-    public ~Type|~||~|~ ~Name|~||~|~ { get; set; }|~
-
-    public static implicit operator ~TypeName|~||~|~(~Property|~Type|~||~|~|~ _~Property|~Name|~||~|~|~) { return new ~TypeName|~||~|~(_~Property|~Name|~||~|~|~); }
-    public static implicit operator ~Property|~Type|~||~|~|~(~TypeName|~||~|~ me) { return me.~Property|~Name|~||~|~|~; }
-}", sw);
+~List~
+~<ul>~Items|~||ListItem~|~</ul>", sw);
             }
             Console.WriteLine(sb.ToString());
             Console.ReadLine();

@@ -1,5 +1,5 @@
 ﻿Call~
-~if ( ~ChildVariable|~||~|~ ) { ~Name|~||~|~(~ChildVariable|~||~|~, buffer); }~
+~if ( ~ChildVariable|~||~|~ ) { this.~Name|~||~|~(~ChildVariable|~||~|~, buffer); }~
 
 ~CallInline~
 ~if ( ~ChildVariable|~||~|~ ) {
@@ -7,21 +7,23 @@
 }~
 
 ~Class~
-~~Namespace|~||~|~.~Name|~||~|~ = {
-        ~Templates|~|
+~if ( !~Namespace|~||~|~.~Name|~||~|~ )
+    ~Namespace|~||~|~.~Name|~||~|~ = {};
+var templateLibrary = ~Namespace|~||~|~.~Name|~||~|~;
+~Templates|~|
 
-        "~Item1|~||~|~": function (tArg, buffer) {
-            ~Item2||Template~
-        }
+templateLibrary["~Item1|~||~|~"] = function (tArg, buffer) {
+    ~Item2||Template~
+}
 
-        |~|~
-}~
+|~|~
+~
 
 ~Instructions~
 ~~|~Loop||Loop~~LoopInline||LoopInline~~Call||Call~~CallInline||CallInline~~Output||Output~~Render||Render~|~~
 
 ~Loop~
-~if ( ~ContextVariable|~||~|~ ) for ( var i = 0 ; i < ~ContextVariable|~||~|~.length ; i++ ) { ~Name|~||~|~(~ContextVariable|~||~|~[i], buffer); }~
+~if ( ~ContextVariable|~||~|~ ) for ( var i = 0 ; i < ~ContextVariable|~||~|~.length ; i++ ) { this.~Name|~||~|~(~ContextVariable|~||~|~[i], buffer); }~
 
 ~LoopInline~
 ~if ( ~ContextVariable|~||~|~ )
@@ -31,10 +33,12 @@ var ~ChildVariable|~||~|~ = ~ContextVariable|~||~|~[~LoopVariable|~||~|~];
 }~
 
 ~Output~
-~buffer += "~Text|~||~|~";~
+~buffer.Text += "~Text|~||~|~";
+~
 
 ~Render~
-~buffer += ~ContextVariable|~||~|~;~
+~buffer.Text += ~ContextVariable|~||~|~;
+~
 
 ~Template~
 ~~Instructions||Instructions~

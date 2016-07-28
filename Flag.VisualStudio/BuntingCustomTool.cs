@@ -32,7 +32,7 @@ namespace Flag.VisualStudio
                 {
                     Console.SetOut(consoleWriter);
                     using (var tw = new StringWriter(sb))
-                        new Flag.Compile.CSharp.BuntingCompiler(new Flag.Compile.CSharp.TemplateCompiler(wszDefaultNamespace, Path.GetFileNameWithoutExtension(wszInputFilePath))).Compile(bstrInputFileContents, tw);
+                        new Flag.Compile.BuntingCompiler(new Flag.Compile.CSharp.TemplateCompiler(wszDefaultNamespace, Path.GetFileNameWithoutExtension(wszInputFilePath))).Compile(bstrInputFileContents, tw);
                 }
                 catch (Exception ex)
                 {

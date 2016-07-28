@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CSharp\BuntingCompiler.cs" />
+    <Compile Include="BuntingCompiler.cs" />
     <Compile Include="CSharp\Flag.gen.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
