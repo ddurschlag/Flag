@@ -6,9 +6,15 @@
 ~Template||Template~
 }~
 
+~Ensure~
+~~|
+if ( typeof ~Prefix|~||~.|~~Name|~||~|~ == "undefined" )
+    ~Prefix|~||~.|~~Name|~||~|~ = {};
+|~~
+
 ~Class~
-~if ( !~Namespace|~||~|~.~Name|~||~|~ )
-    ~Namespace|~||~|~.~Name|~||~|~ = {};
+~if ( typeof ~Namespace|~||~.|~~Name|~||~|~ == "undefined" )
+    ~Namespace|~||~.|~~Name|~||~|~ = {};
 var templateLibrary = ~Namespace|~||~|~.~Name|~||~|~;
 ~Templates|~|
 

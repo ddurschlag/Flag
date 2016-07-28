@@ -33,15 +33,31 @@ namespace Flag.Compile.Javascript
                 new Flag.ClassViewModel_Templates_Call_Loop { Item1 = name, Item2 = (Flag.InstructionsViewModel)instructions.Select(ic.Visit).ToList() }
             };
 
-            Flag.Class(
-            new Flag.ClassViewModel()
+            var spaces = new List<Flag.EnsureViewModel_Loop>();
+            var prefix = new List<string>();
+            foreach (var space in Namespace.Split('.'))
             {
-                Name = ClassName,
-                Namespace = Namespace,
-                Templates = templates
-            },
+                spaces.Add(new Flag.EnsureViewModel_Loop { Name = space, Prefix = ContentOrNull(string.Join(".", prefix)) });
+                prefix.Add(space);
+            }
+
+            Flag.Ensure(spaces, writer);
+
+            Flag.Class(
+                new Flag.ClassViewModel()
+                {
+                    Name = ClassName,
+                    Namespace = Namespace,
+                    Templates = templates
+                },
                 writer
             );
+        }
+
+        private static string ContentOrNull(string s)
+        {
+            if (!string.IsNullOrEmpty(s)) return s;
+            return null;
         }
 
         private string Namespace;
