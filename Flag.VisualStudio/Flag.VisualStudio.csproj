@@ -54,6 +54,10 @@
       <Project>{9601a30d-f1ea-41c2-aaf5-114a4cdbdaad}</Project>
       <Name>Flag.Compile</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FlagParse\Flag.Parse.csproj">
+      <Project>{f0603eab-d09a-4a1d-a616-5742cde16066}</Project>
+      <Name>Flag.Parse</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

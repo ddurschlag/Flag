@@ -1,0 +1,40 @@
+﻿Call~
+~if ( ~ChildVariable|~||~|~ ) { ~Name|~||~|~(~ChildVariable|~||~|~, buffer); }~
+
+~CallInline~
+~if ( ~ChildVariable|~||~|~ ) {
+~Template||Template~
+}~
+
+~Class~
+~~Namespace|~||~|~.~Name|~||~|~ = {
+        ~Templates|~|
+
+        "~Item1|~||~|~": function (tArg, buffer) {
+            ~Item2||Template~
+        }
+
+        |~|~
+}~
+
+~Instructions~
+~~|~Loop||Loop~~LoopInline||LoopInline~~Call||Call~~CallInline||CallInline~~Output||Output~~Render||Render~|~~
+
+~Loop~
+~if ( ~ContextVariable|~||~|~ ) for ( var i = 0 ; i < ~ContextVariable|~||~|~.length ; i++ ) { ~Name|~||~|~(~ContextVariable|~||~|~[i], buffer); }~
+
+~LoopInline~
+~if ( ~ContextVariable|~||~|~ )
+for ( var ~LoopVariable|~||~|~ = 0 ; ~LoopVariable|~||~|~ < ~ContextVariable|~||~|~.length ; ~LoopVariable|~||~|~++ ) {
+var ~ChildVariable|~||~|~ = ~ContextVariable|~||~|~[~LoopVariable|~||~|~];
+~Template||Template~
+}~
+
+~Output~
+~buffer += "~Text|~||~|~";~
+
+~Render~
+~buffer += ~ContextVariable|~||~|~;~
+
+~Template~
+~~Instructions||Instructions~

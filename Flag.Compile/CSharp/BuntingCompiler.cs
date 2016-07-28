@@ -9,28 +9,24 @@ namespace Flag.Compile.CSharp
 
     public class BuntingCompiler
     {
-        public BuntingCompiler(string text, string @namespace, string className)
+        public BuntingCompiler(ITemplateCompiler compiler)
         {
-            Text = text;
-            Namespace = @namespace;
-            ClassName = className;
+            Compiler = compiler;
         }
 
-        public void Compile(TextWriter writer)
+        public void Compile(string text, TextWriter writer)
         {
-            var templates = new BuntingStructurizer().Structurize(new Tokenizer().Tokenize(Text)).ToDictionary(
+            var templates = new BuntingStructurizer().Structurize(new Tokenizer().Tokenize(text)).ToDictionary(
                 t => t.Item1,
                 t => new Parser().Parse(t.Item2).ToArray()
             );
 
             foreach (var t in templates)
             {
-                new TemplateCompiler(t.Value, Namespace, t.Key, ClassName).Compile(writer);
+                Compiler.Compile(t.Key, t.Value, writer);
             }
         }
 
-        private string Text;
-        private string Namespace;
-        private string ClassName;
+        private ITemplateCompiler Compiler;
     }
 }

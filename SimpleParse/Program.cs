@@ -24,7 +24,7 @@ namespace SimpleParse
             var sb = new StringBuilder();
             using (var sw = new StringWriter(sb))
             {
-                new Flag.Compile.CSharp.BuntingCompiler(@"EmptyViewModel~
+                new Flag.Compile.CSharp.BuntingCompiler(new Flag.Compile.CSharp.TemplateCompiler("Test.Bunting", "BuntingTests")).Compile( @"EmptyViewModel~
 ~public class ~TypeName|~||~|~{}~
 
 ~Instructions~
@@ -42,7 +42,7 @@ namespace SimpleParse
 
     public static implicit operator ~TypeName|~||~|~(~Property|~Type|~||~|~|~ _~Property|~Name|~||~|~|~) { return new ~TypeName|~||~|~(_~Property|~Name|~||~|~|~); }
     public static implicit operator ~Property|~Type|~||~|~|~(~TypeName|~||~|~ me) { return me.~Property|~Name|~||~|~|~; }
-}", "Test.Bunting", "BuntingTests").Compile(sw);
+}", sw);
             }
             Console.WriteLine(sb.ToString());
             Console.ReadLine();

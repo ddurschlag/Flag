@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Flag.Compile.CSharp
+namespace Flag.Compile.Javascript
 {
-    using ViewModelTypes;
     using Parse;
     using Parse.Instructions;
     using Parse.Structures;
     public class TemplateCompiler : ITemplateCompiler
     {
         public TemplateCompiler(string @namespace)
-        : this(@namespace, "Templates")
+            : this(@namespace, "Templates")
         { }
 
         public TemplateCompiler(string @namespace, string className)
@@ -34,16 +33,12 @@ namespace Flag.Compile.CSharp
                 new Flag.ClassViewModel_Templates_Call_Loop { Item1 = name, Item2 = (Flag.InstructionsViewModel)instructions.Select(ic.Visit).ToList() }
             };
 
-            var viewModels = new ViewModelConverter().Visit(new FlagViewModelTypeFactory().Manufacture(name + "ViewModel", instructions)).ToList();
-
-
             Flag.Class(
             new Flag.ClassViewModel()
             {
                 Name = ClassName,
                 Namespace = Namespace,
-                Templates = templates,
-                ViewModels = viewModels
+                Templates = templates
             },
                 writer
             );
@@ -57,96 +52,13 @@ namespace Flag.Compile.CSharp
             return new Parser().Parse(new Structurizer().Structurize(new Tokenizer().Tokenize(s)));
         }
 
-        private class ViewModelConverter : ViewModelTypeVisitor<IEnumerable<Flag.ViewModelViewModel>>
-        {
-            private IEnumerable<Flag.ViewModelViewModel> Recurse(ViewModelType m, Flag.ViewModelViewModel result)
-            {
-                return m.InnerTypes.SelectMany(Visit).Concat(new[] { result });
-            }
-
-            public override IEnumerable<Flag.ViewModelViewModel> Visit(MultiLoopViewModel m)
-            {
-                return Recurse(m, new Flag.ViewModelViewModel
-                {
-                    MultiLoop = new Flag.MultiLoopViewModelViewModel
-                    {
-                        EnumerableTypeNames = m.EnumerableTypeNames.ToList(),
-                        TypeName = m.TypeName
-                    }
-                });
-            }
-
-            public override IEnumerable<Flag.ViewModelViewModel> Visit(ComplexViewModel m)
-            {
-                return Recurse(m, new Flag.ViewModelViewModel
-                {
-                    Complex = new Flag.ComplexViewModelViewModel
-                    {
-                        EnumerableTypeNames = m.EnumerableTypeNames.ToList(),
-                        TypeName = m.TypeName,
-                        PropertyTypePairs = m.PropertyTypePairs.Select(ptp => new Flag.ComplexViewModelViewModel_PropertyTypePairs_Call_Loop { Name = ptp.Name, Type = ptp.Type }).ToList()
-                    }
-                });
-            }
-
-            public override IEnumerable<Flag.ViewModelViewModel> Visit(PurePropertyViewModel m)
-            {
-                return Recurse(m, new Flag.ViewModelViewModel
-                {
-                    PureProperty = new Flag.PurePropertyViewModelViewModel
-                    {
-                        TypeName = m.TypeName,
-                        PropertyTypePairs = m.PropertyTypePairs.Select(ptp => new Flag.PurePropertyViewModelViewModel_PropertyTypePairs_Call_Loop { Name = ptp.Name, Type = ptp.Type }).ToList()
-                    }
-                });
-            }
-
-            public override IEnumerable<Flag.ViewModelViewModel> Visit(ListViewModel m)
-            {
-                return Recurse(m, new Flag.ViewModelViewModel
-                {
-                    List = new Flag.ListViewModelViewModel
-                    {
-                        TypeName = m.TypeName,
-                        EnumerableTypeName = m.EnumerableTypeName
-                    }
-                });
-            }
-
-            public override IEnumerable<Flag.ViewModelViewModel> Visit(StringViewModel m)
-            {
-                return Recurse(m, new Flag.ViewModelViewModel
-                {
-                    String = m.TypeName
-                });
-            }
-
-            public override IEnumerable<Flag.ViewModelViewModel> Visit(LabelViewModel m)
-            {
-                return Recurse(m, new Flag.ViewModelViewModel
-                {
-                    Label = new Flag.LabelViewModelViewModel
-                    {
-                        TypeName = m.TypeName,
-                        Property = new Flag.LabelViewModelViewModel_Property_Call { Name = m.Property.Name, Type = m.Property.Type }
-                    }
-                });
-            }
-
-            public override IEnumerable<Flag.ViewModelViewModel> Visit(EmptyViewModel m)
-            {
-                return Recurse(m, new Flag.ViewModelViewModel
-                {
-                    Empty = m.TypeName
-                });
-            }
-        }
-
         private class InstructionConverter : InstructionVisitor<Flag.InstructionsViewModel_Loop>
         {
             static int i = 0;
 
             private static string GetVar() { return "anon_" + (i++); }
+            private static string GetLoopVar() { return "loopIndex_" + (i++); }
+            private static string GetPropertyExpression(string var, string prop) { return string.Format("var[\"prop\"];", var, prop); }
 
             public InstructionConverter(string contextVariable)
             {
@@ -174,14 +86,14 @@ namespace Flag.Compile.CSharp
                     Call = new Flag.CallViewModel
                     {
                         Name = i.Name,
-                        ChildVariable = string.Format("{0}.{1}", ContextVariable, i.Key)
+                        ChildVariable = GetPropertyExpression(ContextVariable, i.Key)
                     }
                 };
             }
 
             public override Flag.InstructionsViewModel_Loop Visit(CallInlineInstruction i)
             {
-                var childVariable = string.Format("{0}.{1}", ContextVariable, i.Key);
+                var childVariable = GetPropertyExpression(ContextVariable, i.Key);
                 return new Flag.InstructionsViewModel_Loop
                 {
                     CallInline = new Flag.CallInlineViewModel
@@ -201,7 +113,8 @@ namespace Flag.Compile.CSharp
                     {
                         Template = (Flag.InstructionsViewModel)i.Instructions.Select(new InstructionConverter(childVariable).Visit).ToList(),
                         ChildVariable = childVariable,
-                        ContextVariable = ContextVariable
+                        ContextVariable = ContextVariable,
+                        LoopVariable = GetLoopVar()
                     }
                 };
             }

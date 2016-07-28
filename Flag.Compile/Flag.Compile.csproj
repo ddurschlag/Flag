@@ -58,6 +58,13 @@
     <Compile Include="CSharp\ViewModelTypes\ViewModelType.cs" />
     <Compile Include="CSharp\FlagViewModelTypeFactory.cs" />
     <Compile Include="CSharp\ViewModelTypes\ViewModelTypeVisitor.cs" />
+    <Compile Include="ITemplateCompiler.cs" />
+    <Compile Include="Javascript\Flag.gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Flag.bunting</DependentUpon>
+    </Compile>
+    <Compile Include="Javascript\TemplateCompiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -69,6 +76,10 @@
   <ItemGroup />
   <ItemGroup>
     <None Include="CSharp\Flag.bunting">
+      <Generator>BuntingTemplate</Generator>
+      <LastGenOutput>Flag.gen.cs</LastGenOutput>
+    </None>
+    <None Include="Javascript\Flag.bunting">
       <Generator>BuntingTemplate</Generator>
       <LastGenOutput>Flag.gen.cs</LastGenOutput>
     </None>
