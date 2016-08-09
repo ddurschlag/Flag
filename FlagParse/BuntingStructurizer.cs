@@ -15,7 +15,7 @@ namespace Flag.Parse
         public BuntingStructurizer()
         {
             State = new VisitorState();
-            State.Peek.Current = new Header(State);
+            State.Peek.Current = new FirstHeader(State);
         }
 
         public IEnumerable<Tuple<string, IEnumerable<Structure>>> Structurize(IEnumerable<Token> input)
@@ -69,12 +69,38 @@ namespace Flag.Parse
 
             public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(FlagToken t)
             {
-                if ( State.TemplateName == null )
+                if (State.TemplateName == null)
                 {
                     throw new Exception("Template without name");
                 }
                 State.Peek.Current = new TemplateStart(State);
                 yield break;
+            }
+
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(EndToken t)
+            {
+                yield break;
+            }
+        }
+
+        private class FirstHeader : Header
+        {
+            public FirstHeader(VisitorState s) : base(s)
+            {
+            }
+
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(FlagToken t)
+            {
+                if (State.TemplateName == null)
+                {
+                    State.Peek.Current = new Header(State);
+                    yield break;
+                }
+                else
+                {
+                    foreach (var x in base.Visit(t)) yield return x;
+                    yield break;
+                }
             }
         }
 
@@ -181,7 +207,7 @@ namespace Flag.Parse
 
             public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(FlagToken t)
             {
-                State.TemplateContent.Add( new CommandStructure(State.Peek.Key, State.Peek.Inline, State.Peek.Name));
+                State.TemplateContent.Add(new CommandStructure(State.Peek.Key, State.Peek.Inline, State.Peek.Name));
                 State.Frames.Pop();
                 State.Frames.Push(new VisitorFrame() { Current = new OuterOutput(State) });
                 yield break;
