@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Flag.Parse.Structures
 {
+    [Serializable]
     public class CommandStructure : Structure
     {
         public CommandStructure(string key, IEnumerable<Structure> inline, string name)

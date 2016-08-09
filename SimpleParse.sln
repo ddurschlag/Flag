@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flag.VisualStudio", "Flag.V
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flag.Tests", "Flag.Tests\Flag.Tests.csproj", "{762C7BDC-50A7-4339-9CFB-0A6FEC87AFCD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flag.CommandLine", "Flag.CommandLine\Flag.CommandLine.csproj", "{E102E3EE-3963-43A5-B419-A402ECC25BBC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{762C7BDC-50A7-4339-9CFB-0A6FEC87AFCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{762C7BDC-50A7-4339-9CFB-0A6FEC87AFCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{762C7BDC-50A7-4339-9CFB-0A6FEC87AFCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E102E3EE-3963-43A5-B419-A402ECC25BBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E102E3EE-3963-43A5-B419-A402ECC25BBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E102E3EE-3963-43A5-B419-A402ECC25BBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E102E3EE-3963-43A5-B419-A402ECC25BBC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -27,11 +27,13 @@ namespace Flag.Parse
             {
                 var error = new Exception("Missing template");
                 error.Data.Add("Structure", s);
+                throw error;
             }
             if (inlinep && namep)
             {
                 var error = new Exception("Ambiguous template");
                 error.Data.Add("Structure", s);
+                throw error;
             }
             if (inlinep)
                 if (keyp)

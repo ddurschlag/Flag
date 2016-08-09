@@ -145,9 +145,14 @@ namespace Flag.Compile.Javascript
 
             public override Flag.InstructionsViewModel_Loop Visit(OutputInstruction i)
             {
+
                 return new Flag.InstructionsViewModel_Loop
                 {
-                    Output = i.Text.Replace("\"", "\"\"")
+                    Output = System.Text.RegularExpressions.Regex.Replace(
+                        i.Text.Replace("\"", "\"\"").Replace(@"\", @"\\"),
+                        @"\r?\n",
+                        "\\\n"
+                    )
                 };
             }
         }

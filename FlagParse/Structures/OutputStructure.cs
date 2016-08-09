@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Flag.Parse.Structures
 {
+    [Serializable]
     public class OutputStructure : Structure
     {
         public OutputStructure(string text) { Text = text; }

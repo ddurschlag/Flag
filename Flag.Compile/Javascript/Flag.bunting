@@ -39,11 +39,11 @@ var ~ChildVariable|~||~|~ = ~ContextVariable|~||~|~[~LoopVariable|~||~|~];
 }~
 
 ~Output~
-~buffer.Text += "~Text|~||~|~";
+~buffer.push( "~Text|~||~|~" );
 ~
 
 ~Render~
-~buffer.Text += ~ContextVariable|~||~|~;
+~buffer.push( ~ContextVariable|~||~|~ );
 ~
 
 ~Template~

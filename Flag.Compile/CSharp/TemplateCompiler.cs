@@ -218,7 +218,7 @@ namespace Flag.Compile.CSharp
             {
                 return new Flag.InstructionsViewModel_Loop
                 {
-                    Output = i.Text.Replace("\"", "\"\"")
+                    Output = i.Text.Replace("\"", "\"\"").Replace(@"\", @"\\")
                 };
             }
         }

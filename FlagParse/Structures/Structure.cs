@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Flag.Parse.Structures
 {
+    [Serializable]
     public abstract class Structure
     {
         public abstract void Accept(StructureVisitor v);
