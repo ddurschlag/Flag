@@ -1,0 +1,4 @@
+{
+	"cmd": ["C:\\Program Files\\Flag\\Flag.exe", "$file"],
+	"selector": "source.flag"
+}

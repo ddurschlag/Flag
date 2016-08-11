@@ -1,0 +1,26 @@
+// [PackageDev] target_format: plist, ext: tmLanguage
+    { "name": "Flag",
+  "scopeName": "source.flag",
+  "fileTypes": ["flag"],
+  "uuid": "7f039691-69d7-447e-8a60-fec2c764b59d",
+
+  "patterns": [
+  	{ "name":"source.flag", "match":"\\\\\\\\"},
+  	{ "name":"source.flag", "match":"\\\\[|~\\\\]"},
+    {
+    	"name":"keyword.control.flag",
+    	"begin":"~(.*?)\\|",
+    	"end":"\\|(.*?)~",
+    	"beginCaptures": {
+    	    "0": { "name": "variable.parameter.flag.key" }
+    	},
+    	"endCaptures": {
+    	    "0": { "name": "variable.parameter.flag.name" }
+    	},
+    	"patterns":[
+			{ "include": "$self" },
+       		{  "name": "source.flag", "match": "." }
+    	]
+	}
+  ]
+}

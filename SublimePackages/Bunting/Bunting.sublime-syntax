@@ -1,0 +1,105 @@
+%YAML 1.2
+---
+name: Bunting
+scope: source.Bunting
+file_extensions: [bunting]
+
+contexts:
+  main:
+    - match: ~
+      scope: keyword.operator.bunting.start_header
+      set: header
+    - match: \b
+      set: header
+  escapes:
+    - match: \\\\|\\~|\\\|
+      scope: constant.character
+  header:
+    - include: escapes
+    - match: "[^~]+"
+      scope: entity.name.section.bunting.template
+    - match: ~
+      scope: keyword.operator.bunting.end_header
+      set: template_start
+  template_start:
+    - match: ~
+      scope: keyword.operator.bunting.start_template
+      set: outer_output
+    - match: \S
+      scope: invalid.illegal.bunting.non_whitespace_in_separator
+  outer_output:
+    - include: escapes
+    - match: \|
+      scope: invalid.illegal.bunting.non_escaped_pole
+    - match: ~
+      scope: keyword.operator.bunting.start_key_or_end_template
+      set: outer_key
+    - match: .
+      scope: string.unquoted.bunting.output
+  outer_key:
+    - include: escapes
+    - match: \|
+      scope: keyword.operator.bunting.key_to_inline
+      set: outer_inline
+    - match: ~
+      scope: keyword.operator.bunting.start_header
+      set: header
+    - match: \S
+      scope: variable.other.bunting.key
+      set: key_non_space
+  key_non_space:
+    - include: escapes
+    - match: \|
+      scope: keyword.operator.bunting.key_to_inline
+      set: outer_inline
+    - match: ~
+      scope: invalid.illegal.non_whitespace_in_separator
+    - match: .
+      scope: variable.other.bunting.key
+  outer_inline:
+    - include: escapes
+    - match: \|
+      scope: keyword.operator.bunting.inline_to_name
+      set: outer_name
+    - match: ~
+      scope: keyword.operator.bunting.start_key
+      push: inner_key
+    - match: .
+      scope: string.unquoted.bunting.output
+  outer_name:
+    - include: escapes
+    - match: ~
+      scope: keyword.operator.bunting.end_name
+      set: outer_output
+    - match: \|
+      scope: invalid.illegal.bunting.non_escaped_pole
+    - match: .
+      scope: variable.other.bunting.name
+  inner_key:
+    - include: escapes
+    - match: ~
+      scope: invalid.illegal.bunting.non_escaped_flag
+    - match: \|
+      scope: keyword.operator.bunting.key_to_inline
+      set: inner_inline
+    - match: .
+      scope: variable.other.bunting.key
+  inner_inline:
+    - include: escapes
+    - match: \|
+      scope: keyword.operator.bunting.inline_to_name
+      set: inner_name
+    - match: ~
+      scope: keyword.operator.bunting.start_key
+      push: inner_key
+    - match: .
+      scope: string.unquoted.bunting.output
+  inner_name:
+    - include: escapes
+    - match: \|
+      scope: invalid.illegal.bunting.non_escaped_pole
+    - match: ~
+      scope: keyword.operator.bunting.end_name
+      pop: true
+    - match: .
+      scope: variable.other.bunting.name
