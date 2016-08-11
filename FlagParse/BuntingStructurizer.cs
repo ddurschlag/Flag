@@ -161,6 +161,13 @@ namespace Flag.Parse
                 yield break;
             }
 
+            public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(EndToken t)
+            {
+                if (!string.IsNullOrWhiteSpace(State.Peek.Key))
+                    throw new Exception("Only whitespace is allowed after template end");
+                yield return Tuple.Create(State.TemplateName, (IEnumerable<Structure>)State.TemplateContent);
+            }
+
             public override IEnumerable<Tuple<string, IEnumerable<Structure>>> Visit(FlagToken t)
             {
                 if (!string.IsNullOrWhiteSpace(State.Peek.Key))
